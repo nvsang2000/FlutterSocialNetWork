@@ -15,7 +15,7 @@ class ButtonWidget extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         onPressed: onTap,
         child: Text(
-          "Login",
+          text,
           style: TextStyle(
               color: Color(0xFFF1E6FF),
               fontSize: 20,

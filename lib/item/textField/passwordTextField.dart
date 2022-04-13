@@ -5,10 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:test/item/textField/textField.dart';
 
 class PasswordTextField extends StatefulWidget {
-  const PasswordTextField({Key? key, required this.onChanged})
+  const PasswordTextField(
+      {Key? key,
+      required this.onChanged,
+      required this.hintText,
+      required this.controller})
       : super(key: key);
   final ValueChanged<String> onChanged;
-
+  final String hintText;
+  final TextEditingController controller;
   @override
   State<PasswordTextField> createState() => _PasswordTextFieldState();
 }
@@ -18,13 +23,23 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   @override
   Widget build(BuildContext context) {
     return AuthTextField(
-        child: TextField(
+        child: TextFormField(
+      textInputAction: TextInputAction.next,
       obscureText: _obscureText,
       autofocus: true,
+      controller: widget.controller,
       onChanged: widget.onChanged,
+      validator: (val) {
+        if (val!.isEmpty) {
+          return "Enter Password";
+        } else if (val.length < 6) {
+          return "Length min >=6";
+        } else
+          return null;
+      },
       style: TextStyle(color: Color(0xFF6F35A5)),
       decoration: InputDecoration(
-        hintText: "Username",
+        hintText: widget.hintText,
         hintStyle: TextStyle(color: Color(0xFF6F35A5)),
         prefixIcon: Icon(
           Icons.vpn_key,
