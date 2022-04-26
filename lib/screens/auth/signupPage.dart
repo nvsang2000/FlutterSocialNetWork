@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:test/item/button/button.dart';
+import 'package:test/item/button/button_checkAuth.dart';
 import 'package:test/item/textField/passwordTextField.dart';
 import 'package:test/item/textField/usernameTextField.dart';
 import 'package:test/item/tittle.dart';
@@ -10,9 +11,8 @@ import 'package:test/models/user.dart';
 import 'package:test/provider/authProvider.dart';
 import 'package:test/provider/userProvider.dart';
 import 'package:test/screens/auth/background.dart';
-import 'package:test/screens/auth/changedScreen.dart';
 import 'package:test/screens/auth/loginPage.dart';
-import 'package:test/screens/dashboard/home_page.dart';
+import 'package:test/screens/BarItem/profilePage.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({
@@ -25,10 +25,7 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
-  var loading = Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [CircularProgressIndicator(), Text("Registering...Please wait!")],
-  );
+  bool isLoading = false;
   TextEditingController userName = TextEditingController();
   TextEditingController pass = TextEditingController();
   TextEditingController comfirmPass = TextEditingController();
@@ -45,18 +42,24 @@ class _SignupPageState extends State<SignupPage> {
         if (pass.text.endsWith(comfirmPass.text)) {
           auth.signup(userName.text, pass.text).then((response) {
             if (response['status']) {
+              setState(() {
+                isLoading = false;
+              });
               auth.signedUpStatus = Status.SignedUp;
               auth.notify();
-              Navigator.pushReplacement(context,
+              Navigator.push(context,
                   MaterialPageRoute(builder: (context) => LoginPage()));
             } else {
               auth.signedUpStatus = Status.NotSignedUp;
+
+              setState(() {
+                isLoading = false;
+              });
               auth.notify();
             }
           });
         }
-      } else
-        print("not");
+      }
     }
 
     return Scaffold(
@@ -88,11 +91,12 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: "Comfirm Password",
                       controller: comfirmPass),
                   SBox(30),
-                  auth.signedUpStatus == Status.Registering
-                      ? loading
+                  isLoading
+                      ? ButtonCheck(text: "SignUp", onTap: () {})
                       : ButtonWidget(
                           text: "Sign Up",
                           onTap: () {
+                            isLoading = true;
                             validate();
                           }),
                   SBox(10),

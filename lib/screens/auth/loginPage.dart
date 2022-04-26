@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/item/button/button.dart';
+import 'package:test/item/button/button_checkAuth.dart';
 import 'package:test/item/textField/passwordTextField.dart';
 import 'package:test/item/textField/textField.dart';
 import 'package:test/item/textField/usernameTextField.dart';
@@ -13,7 +14,8 @@ import 'package:test/provider/authProvider.dart';
 import 'package:test/provider/userProvider.dart';
 import 'package:test/screens/auth/background.dart';
 import 'package:test/screens/auth/signupPage.dart';
-import 'package:test/screens/dashboard/home_page.dart';
+import 'package:test/screens/BarItem/profilePage.dart';
+import 'package:test/screens/top_navigation.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -26,10 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
-  var loading = Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [CircularProgressIndicator(), Text("Login...Please wait!")],
-  );
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +36,23 @@ class _LoginPageState extends State<LoginPage> {
     AuthProvider auth = Provider.of<AuthProvider>(context);
     void validate() {
       if (globalKey.currentState!.validate()) {
-        print('login');
         final Future<Map<String, dynamic>> response =
             auth.login(username.text, password.text);
         response.then((response) {
+          print('checkaccout $response');
+
           if (response['status']) {
+            setState(() {
+              isLoading = false;
+            });
             User user = response['user'];
             Provider.of<UserProvider>(context, listen: false).setUser(user);
-            print(user.token);
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => NavigationBarSC()));
+          } else {
+            setState(() {
+              isLoading = false;
+            });
           }
         });
       }
@@ -79,13 +85,20 @@ class _LoginPageState extends State<LoginPage> {
                           controller: password,
                         ),
                         SBox(30),
-                        auth.loggedInStatus == Status.Authenticating
-                            ? loading
+                        isLoading
+                            ? ButtonCheck(text: "Login", onTap: () {})
                             : ButtonWidget(
                                 text: "Login",
                                 onTap: () {
+                                  isLoading = true;
                                   validate();
                                 }),
+                        //     ? loading
+                        // : ButtonWidget(
+                        //     text: "Login",
+                        //     onTap: () {
+                        //       validate();
+                        //     }),
                       ],
                     )),
                 SBox(10),

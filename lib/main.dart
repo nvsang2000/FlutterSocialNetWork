@@ -4,9 +4,10 @@ import 'package:test/models/user.dart';
 import 'package:test/preference/userPreference.dart';
 import 'package:test/provider/authProvider.dart';
 import 'package:test/provider/userProvider.dart';
-import 'package:test/screens/auth/changedScreen.dart';
+
 import 'package:test/screens/auth/loginPage.dart';
-import 'package:test/screens/dashboard/home_page.dart';
+import 'package:test/screens/BarItem/profilePage.dart';
+import 'package:test/screens/top_navigation.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
                   } else {
                     Provider.of<UserProvider>(context)
                         .setUser(snapshot.data as dynamic);
-                    return HomePage();
+                    return NavigationBarSC();
                   }
               }
             },

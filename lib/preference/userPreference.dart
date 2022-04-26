@@ -21,7 +21,6 @@ class UserPreference {
   Future<User> getUser() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     String? username = pref.getString("email");
-    String? password = pref.getString("password");
     String? token = pref.getString("token");
 
     return User(username: username, token: token);
@@ -35,9 +34,9 @@ class UserPreference {
     pref.clear();
   }
 
-  Future<String> getToken() async {
+  Future<String?> getToken() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     String? token = pref.getString('token');
-    return token!;
+    return token;
   }
 }

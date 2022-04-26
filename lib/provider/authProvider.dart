@@ -21,6 +21,10 @@ enum Status {
 class AuthProvider extends ChangeNotifier {
   Status _loggedInStatus = Status.NotLoggedIn;
   Status _signedUpStatus = Status.NotSignedUp;
+  Status _loggedOutStatus = Status.LoggedIn;
+  Status get loggedOutStatus => this._loggedOutStatus;
+
+  set loggedOutStatus(Status value) => this._loggedOutStatus = value;
   Status get loggedInStatus => this._loggedInStatus;
 
   set loggedInStatus(Status value) => this._loggedInStatus = value;
@@ -56,12 +60,18 @@ class AuthProvider extends ChangeNotifier {
       print(userData);
       User authUser = User.fromJson(responseData);
       // UserPreference().saveUser(authUser);
-      print(responseData);
-      result = {
-        'status': true,
-        'message': 'Successfully Signup',
-        'data': authUser
-      };
+      if (responseData['success']) {
+        result = {
+          'status': true,
+          'message': 'Successfully Signup',
+          'data': authUser
+        };
+      } else {
+        result = {
+          'status': false,
+          'message': 'error',
+        };
+      }
     } else {
       result = {
         'status': false,
@@ -84,25 +94,20 @@ class AuthProvider extends ChangeNotifier {
         body: json.encode(loginData),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ZGlzYXBpdXNlcjpkaXMjMTIz',
-          'X-ApiKey': 'ZGlzIzEyMw=='
         });
-
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
-      print(responseData);
+      if (responseData['success']) {
+        var userData = responseData['data'];
+        User authUser = User.fromJson(responseData);
+        UserPreference().saveUser(authUser);
+        _loggedInStatus = Status.LoggedIn;
+        notifyListeners();
 
-      var userData = responseData['data'];
-      print(userData);
-      User authUser = User.fromJson(responseData);
-
-      UserPreference().saveUser(authUser);
-
-      _loggedInStatus = Status.LoggedIn;
-      notifyListeners();
-
-      result = {'status': true, 'message': 'Successful', 'user': authUser};
+        result = {'status': true, 'message': 'Successful', 'user': authUser};
+      } else
+        result = {'status': false, 'message': 'Login failed '};
     } else {
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
@@ -112,6 +117,24 @@ class AuthProvider extends ChangeNotifier {
       };
     }
 
+    return result;
+  }
+
+  Future<Map<String, dynamic>> logout(String token) async {
+    var result;
+    notifyListeners();
+
+    Response response = await get(Uri.parse(ApiUrl.logoutUrl),
+        headers: {'Authorization': 'Bearer +${token}'});
+    if (response.statusCode == 200) {
+      UserPreference().removeUser();
+      _loggedOutStatus = Status.LoggedOut;
+      notifyListeners();
+
+      result = {'status': true, 'message': 'Logout Successfully '};
+    } else {
+      result = {'status': false, 'message': 'Logout Error'};
+    }
     return result;
   }
 
