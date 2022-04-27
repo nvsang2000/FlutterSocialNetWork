@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test/item/stories_item.dart/stories_item.dart';
 import 'package:test/item/tittle.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,33 +13,72 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(left: 10),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        SizedBox(
-          height: 10,
-        ),
-        Tittle(text: "Featured Stories", size: 18, color: Color(0xFF6F35A5)),
-        SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Stories(),
-                ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemCount: 5,
-                  itemBuilder: (context, index) => Stories(),
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: Builder(
+        builder: ((context) => CustomScrollView(
+              // scrollDirection: Axis.vertical,
+              slivers: <Widget>[
+                SliverOverlapInjector(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context)),
+                // SliverSafeArea(
+                //     sliver: Tittle(text: "ss", size: 23, color: Colors.black)),
+                // SliverAppBar(
+                //   toolbarHeight: 20,
+                //   backgroundColor: Colors.white,
+                //   title: Tittle(
+                //       text: "Featured Stories",
+                //       size: 18,
+                //       color: Color(0xFF6F35A5)),
+                // ),
+                SliverFixedExtentList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      return Container(
+                        padding: EdgeInsets.only(top: 5),
+                        color: Colors.white,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            UserOnl(),
+                            ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemCount: 5,
+                              itemBuilder: (context, index) => UserOnl(),
+                            )
+                          ],
+                        ),
+                      );
+                    }, childCount: 1),
+                    itemExtent: 100),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    return ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => Stories(),
+                      itemCount: 5,
+                    );
+                  }, childCount: 1),
                 )
+                // SliverToBoxAdapter(
+                //   child: ListView.builder(
+
+                //     shrinkWrap: true,
+                //     itemBuilder: (context, index) => Stories(),
+                //     itemCount: 5,
+                //   ),
+                // )
               ],
-            ))
-      ]),
+            )),
+      ),
     );
   }
 }
 
-class Stories extends StatelessWidget {
-  const Stories({
+class UserOnl extends StatelessWidget {
+  const UserOnl({
     Key? key,
   }) : super(key: key);
 
@@ -48,19 +88,19 @@ class Stories extends StatelessWidget {
         onTap: () {},
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(
-            margin: EdgeInsets.only(right: 10),
+            margin: EdgeInsets.only(right: 10, left: 10),
             height: 70,
             width: 70,
             decoration: BoxDecoration(
               color: Color(0xFF6F35A5),
               borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: Color(0xFF6F35A5), width: 3),
+              border: Border.all(color: Color(0xFF6F35A5), width: 1),
               image: DecorationImage(
                   image: AssetImage('images/profile.jpg'), fit: BoxFit.cover),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(right: 10),
+            margin: EdgeInsets.only(right: 10, left: 10),
             child: Text(
               "User",
               style: TextStyle(fontSize: 16),
