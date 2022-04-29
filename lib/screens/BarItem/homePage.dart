@@ -22,16 +22,7 @@ class _HomePageState extends State<HomePage> {
                 SliverOverlapInjector(
                     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
                         context)),
-                // SliverSafeArea(
-                //     sliver: Tittle(text: "ss", size: 23, color: Colors.black)),
-                // SliverAppBar(
-                //   toolbarHeight: 20,
-                //   backgroundColor: Colors.white,
-                //   title: Tittle(
-                //       text: "Featured Stories",
-                //       size: 18,
-                //       color: Color(0xFF6F35A5)),
-                // ),
+
                 SliverFixedExtentList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       return Container(
@@ -87,16 +78,24 @@ class UserOnl extends StatelessWidget {
     return GestureDetector(
         onTap: () {},
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          // Container(
+          //   margin: EdgeInsets.only(right: 10, left: 10),
+          //   height: 70,
+          //   width: 70,
+          //   decoration: BoxDecoration(
+          //     color: Color(0xFF6F35A5),
+          //     borderRadius: BorderRadius.circular(100),
+          //     border: Border.all(color: Color(0xFF6F35A5), width: 1),
+          //     image: DecorationImage(
+          //         image: AssetImage('images/profile.jpg'), fit: BoxFit.cover),
+          //   ),
+          // ),
           Container(
             margin: EdgeInsets.only(right: 10, left: 10),
-            height: 70,
-            width: 70,
-            decoration: BoxDecoration(
-              color: Color(0xFF6F35A5),
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: Color(0xFF6F35A5), width: 1),
-              image: DecorationImage(
-                  image: AssetImage('images/profile.jpg'), fit: BoxFit.cover),
+            child: CircleAvatar(
+              radius: 35,
+              backgroundColor: Colors.white,
+              backgroundImage: AssetImage("images/profile.jpg"),
             ),
           ),
           Container(

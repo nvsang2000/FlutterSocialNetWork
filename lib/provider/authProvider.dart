@@ -56,8 +56,6 @@ class AuthProvider extends ChangeNotifier {
     var result;
     final Map<String, dynamic> responseData = json.decode(response.body);
     if (response.statusCode == 200) {
-      var userData = responseData['data'];
-      print(userData);
       User authUser = User.fromJson(responseData);
       // UserPreference().saveUser(authUser);
       if (responseData['success']) {
@@ -97,9 +95,8 @@ class AuthProvider extends ChangeNotifier {
         });
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
-
+      print(responseData['data']['email']);
       if (responseData['success']) {
-        var userData = responseData['data'];
         User authUser = User.fromJson(responseData);
         UserPreference().saveUser(authUser);
         _loggedInStatus = Status.LoggedIn;

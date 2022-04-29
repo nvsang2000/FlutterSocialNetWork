@@ -94,7 +94,7 @@ class _StoriesState extends State<Stories> {
                         ? TextSpan(style: ColorBlack(), children: [
                             TextSpan(text: shortText),
                             TextSpan(
-                                text: "...Xem thêm",
+                                text: "...See more",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ))

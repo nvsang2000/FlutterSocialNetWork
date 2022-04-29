@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test/item/tittle.dart';
 import 'package:test/screens/BarItem/homePage.dart';
+import 'package:test/screens/BarItem/profilePage.dart';
 
 class NavigationBarSC extends StatefulWidget {
   const NavigationBarSC({Key? key}) : super(key: key);
@@ -81,7 +82,7 @@ class _NavigationBarSCState extends State<NavigationBarSC>
             ];
           },
           body: TabBarView(
-            children: <Widget>[HomePage(), HomePage(), HomePage()],
+            children: <Widget>[ProfilePage(), HomePage(), HomePage()],
             controller: _tabController,
           )),
     );

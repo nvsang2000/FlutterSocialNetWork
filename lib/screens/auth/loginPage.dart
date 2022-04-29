@@ -39,13 +39,14 @@ class _LoginPageState extends State<LoginPage> {
         final Future<Map<String, dynamic>> response =
             auth.login(username.text, password.text);
         response.then((response) {
-          print('checkaccout $response');
+          // print('checkaccout $response');
 
           if (response['status']) {
             setState(() {
               isLoading = false;
             });
             User user = response['user'];
+
             Provider.of<UserProvider>(context, listen: false).setUser(user);
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => NavigationBarSC()));
