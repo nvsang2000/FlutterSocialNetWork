@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test/item/stories_item.dart/stories_item.dart';
-import 'package:test/item/tittle.dart';
+import 'package:test/screens/posts/stories_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

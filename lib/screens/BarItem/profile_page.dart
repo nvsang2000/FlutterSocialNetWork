@@ -1,12 +1,11 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test/models/user.dart';
-import 'package:test/preference/userPreference.dart';
-import 'package:test/provider/authProvider.dart';
-import 'package:test/provider/userProvider.dart';
 
-import 'package:test/screens/auth/loginPage.dart';
+import 'package:test/provider/auth_provider.dart';
+import 'package:test/provider/user_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);

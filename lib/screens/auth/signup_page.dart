@@ -1,18 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:test/item/button/button.dart';
-import 'package:test/item/button/button_checkAuth.dart';
-import 'package:test/item/textField/passwordTextField.dart';
-import 'package:test/item/textField/usernameTextField.dart';
+import 'package:test/item/button/button_check.dart';
+import 'package:test/item/textField/password_textfield.dart';
+import 'package:test/item/textField/username_textfield.dart';
 import 'package:test/item/tittle.dart';
-import 'package:test/models/user.dart';
-import 'package:test/provider/authProvider.dart';
-import 'package:test/provider/userProvider.dart';
+
+import 'package:test/provider/auth_provider.dart';
+
 import 'package:test/screens/auth/background.dart';
-import 'package:test/screens/auth/loginPage.dart';
-import 'package:test/screens/BarItem/profilePage.dart';
+import 'package:test/screens/auth/login_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({

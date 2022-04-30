@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/models/user.dart';
 
