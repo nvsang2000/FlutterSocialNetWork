@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:test/item/tittle.dart';
-import 'package:test/screens/posts/comment_screen.dart';
+import 'package:test/item/tittle/tittle.dart';
+import 'package:test/screens/posts/comment/comment_screen.dart';
 
 class Stories extends StatefulWidget {
   const Stories({Key? key}) : super(key: key);
@@ -88,9 +88,9 @@ class _StoriesState extends State<Stories> {
   Row Interactive() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             LikeButton(
               padding: EdgeInsets.only(left: 20),
@@ -129,12 +129,12 @@ class _StoriesState extends State<Stories> {
               ),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.message,
-                      color: Colors.grey,
-                    ),
+                  Icon(
+                    Icons.message,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(
+                    width: 10,
                   ),
                   Text(
                     likeCount.toString(),

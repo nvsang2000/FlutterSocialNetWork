@@ -7,7 +7,7 @@ import 'package:test/item/textField/password_textfield.dart';
 
 import 'package:test/item/textField/username_textfield.dart';
 
-import 'package:test/item/tittle.dart';
+import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/auth_provider.dart';
 import 'package:test/provider/user_provider.dart';

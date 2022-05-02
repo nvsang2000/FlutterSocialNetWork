@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test/item/app_bar.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/user_provider.dart';
-import 'package:test/screens/posts/comment_item.dart';
+import 'package:test/screens/posts/comment/comment_item.dart';
 
 class CommentScreen extends StatefulWidget {
   const CommentScreen({Key? key}) : super(key: key);
@@ -23,7 +24,13 @@ class _CommentScreenState extends State<CommentScreen> {
             SizedBox(
               height: 20,
             ),
-            appBar(),
+            AppBarWidget(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              name: "Post Comments",
+              isDone: false,
+            ),
             commentContainer(context, user),
             bottomBar()
           ],
@@ -44,27 +51,6 @@ class _CommentScreenState extends State<CommentScreen> {
           CommentItem(user: user),
         ],
       ),
-    );
-  }
-
-  Container appBar() {
-    return Container(
-      height: 50,
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(children: [
-        IconButton(
-          splashColor: Colors.transparent,
-          onPressed: () {},
-          icon: Icon(Icons.arrow_back_ios, size: 20),
-        ),
-        SizedBox(
-          width: 20,
-        ),
-        Text(
-          "Post Comments",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-      ]),
     );
   }
 

@@ -1,6 +1,6 @@
 // ignore_for_file: type=lint
 import 'package:flutter/material.dart';
-import 'package:test/item/tittle.dart';
+import 'package:test/item/tittle/tittle.dart';
 import 'package:test/screens/BarItem/home_page.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
 

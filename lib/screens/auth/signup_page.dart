@@ -5,7 +5,7 @@ import 'package:test/item/button/button.dart';
 import 'package:test/item/button/button_check.dart';
 import 'package:test/item/textField/password_textfield.dart';
 import 'package:test/item/textField/username_textfield.dart';
-import 'package:test/item/tittle.dart';
+import 'package:test/item/tittle/tittle.dart';
 
 import 'package:test/provider/auth_provider.dart';
 

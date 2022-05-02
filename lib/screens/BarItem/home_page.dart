@@ -1,5 +1,7 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:test/screens/posts/stories_item.dart';
+import 'package:test/screens/posts/new_post.dart';
+import 'package:test/screens/posts/post_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,7 +31,7 @@ class _HomePageState extends State<HomePage> {
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: [
-                            UserOnl(),
+                            CreatNewPost(),
                             ListView.builder(
                               scrollDirection: Axis.horizontal,
                               shrinkWrap: true,
@@ -76,18 +78,6 @@ class UserOnl extends StatelessWidget {
     return GestureDetector(
         onTap: () {},
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          // Container(
-          //   margin: EdgeInsets.only(right: 10, left: 10),
-          //   height: 70,
-          //   width: 70,
-          //   decoration: BoxDecoration(
-          //     color: Color(0xFF6F35A5),
-          //     borderRadius: BorderRadius.circular(100),
-          //     border: Border.all(color: Color(0xFF6F35A5), width: 1),
-          //     image: DecorationImage(
-          //         image: AssetImage('images/profile.jpg'), fit: BoxFit.cover),
-          //   ),
-          // ),
           Container(
             margin: EdgeInsets.only(right: 10, left: 10),
             child: CircleAvatar(
@@ -100,7 +90,49 @@ class UserOnl extends StatelessWidget {
             margin: EdgeInsets.only(right: 10, left: 10),
             child: Text(
               "User",
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 88, 86, 86)),
+            ),
+          )
+        ]));
+  }
+}
+
+class CreatNewPost extends StatelessWidget {
+  const CreatNewPost({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => NewPost()));
+        },
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          DottedBorder(
+            color: Colors.grey,
+            strokeWidth: 2,
+            radius: Radius.circular(50),
+            borderType: BorderType.Circle,
+            child: Container(
+              height: 66,
+              width: 66,
+              margin: EdgeInsets.only(right: 10, left: 10),
+              child: Icon(Icons.add),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(right: 10, left: 10),
+            child: Text(
+              "New Post",
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 88, 86, 86)),
             ),
           )
         ]));
