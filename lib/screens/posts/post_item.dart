@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/screens/posts/comment/comment_screen.dart';
+import 'package:test/screens/profile_friend_page.dart';
 
 class Stories extends StatefulWidget {
   const Stories({Key? key}) : super(key: key);
@@ -196,37 +197,42 @@ class _StoriesState extends State<Stories> {
     );
   }
 
-  Row inforUser() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                color: Color(0xFF6F35A5),
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(color: Colors.black, width: 1),
-                image: DecorationImage(
-                    image: AssetImage('images/profile.jpg'), fit: BoxFit.cover),
+  GestureDetector inforUser() {
+    return GestureDetector(
+      onTap: () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ProfileFriendPage())),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                  color: Color(0xFF6F35A5),
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(color: Colors.black, width: 1),
+                  image: DecorationImage(
+                      image: AssetImage('images/profile.jpg'),
+                      fit: BoxFit.cover),
+                ),
               ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Tittle(text: "Văn Liệu", size: 18, color: Colors.black),
-                Text(time + " Ago")
-              ],
-            )
-          ],
-        ),
-        IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
-      ],
+              SizedBox(
+                width: 10,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Tittle(text: "Văn Liệu", size: 18, color: Colors.black),
+                  Text(time + " Ago")
+                ],
+              )
+            ],
+          ),
+          IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
+        ],
+      ),
     );
   }
 

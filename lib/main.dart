@@ -9,6 +9,7 @@ import 'package:test/provider/user_provider.dart';
 
 import 'package:test/screens/auth/login_page.dart';
 import 'package:test/screens/posts/new_post.dart';
+import 'package:test/screens/profile_friend_page.dart';
 
 import 'package:test/screens/top_navigation.dart';
 
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
                   } else {
                     Provider.of<UserProvider>(context)
                         .setUser(snapshot.data as dynamic);
-                    return NewPost();
+                    return NavigationBarSC();
                   }
               }
             },
