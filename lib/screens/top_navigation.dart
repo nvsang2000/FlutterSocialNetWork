@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/screens/BarItem/home_page.dart';
+import 'package:test/screens/BarItem/messeger_page.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
 
 class NavigationBarSC extends StatefulWidget {
@@ -80,7 +81,7 @@ class _NavigationBarSCState extends State<NavigationBarSC>
             ];
           },
           body: TabBarView(
-            children: <Widget>[HomePage(), HomePage(), ProfilePage()],
+            children: <Widget>[MessengerPage(), HomePage(), ProfilePage()],
             controller: _tabController,
           )),
     );
