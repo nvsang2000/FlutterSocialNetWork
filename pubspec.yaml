@@ -33,6 +33,9 @@ dependencies:
   http: ^0.13.4
   like_button: ^2.0.4
   shared_preferences: ^2.0.13
+  dotted_border: ^2.0.0+2
+  image_picker: ^0.8.5
+  video_player: ^2.4.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

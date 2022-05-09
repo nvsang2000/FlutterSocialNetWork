@@ -1,8 +1,5 @@
-// ignore_for_file: prefer_const_constructors
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test/item/textField/textField.dart';
+import 'package:test/item/textField/textfield_item.dart';
 
 class PasswordTextField extends StatefulWidget {
   const PasswordTextField(

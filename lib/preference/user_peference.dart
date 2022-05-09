@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/models/user.dart';
 
@@ -6,13 +8,11 @@ class UserPreference {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     var us = user.username;
     if (us != null) {
-      pref.setString('email', us);
-      print(us);
+      pref.setString('email', user.username!);
     }
     var tk = user.token;
     if (tk != null) {
       pref.setString('token', user.token!);
-      print(tk);
     }
 
     return pref.commit();
@@ -37,6 +37,12 @@ class UserPreference {
   Future<String?> getToken() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     String? token = pref.getString('token');
+    return token;
+  }
+
+  Future<String?> getUsername() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String? token = pref.getString('email');
     return token;
   }
 }

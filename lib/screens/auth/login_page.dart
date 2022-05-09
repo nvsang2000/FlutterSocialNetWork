@@ -1,20 +1,19 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: type=lint, unused_local_variable
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/item/button/button.dart';
-import 'package:test/item/button/button_checkAuth.dart';
-import 'package:test/item/textField/passwordTextField.dart';
-import 'package:test/item/textField/textField.dart';
-import 'package:test/item/textField/usernameTextField.dart';
-import 'package:http/http.dart' as http;
-import 'package:test/item/tittle.dart';
+import 'package:test/item/button/button_check.dart';
+import 'package:test/item/textField/password_textfield.dart';
+
+import 'package:test/item/textField/username_textfield.dart';
+
+import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/user.dart';
-import 'package:test/provider/authProvider.dart';
-import 'package:test/provider/userProvider.dart';
+import 'package:test/provider/auth_provider.dart';
+import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/auth/background.dart';
-import 'package:test/screens/auth/signupPage.dart';
-import 'package:test/screens/BarItem/profilePage.dart';
+import 'package:test/screens/auth/signup_page.dart';
+
 import 'package:test/screens/top_navigation.dart';
 
 class LoginPage extends StatefulWidget {
@@ -39,13 +38,14 @@ class _LoginPageState extends State<LoginPage> {
         final Future<Map<String, dynamic>> response =
             auth.login(username.text, password.text);
         response.then((response) {
-          print('checkaccout $response');
+          // print('checkaccout $response');
 
           if (response['status']) {
             setState(() {
               isLoading = false;
             });
             User user = response['user'];
+
             Provider.of<UserProvider>(context, listen: false).setUser(user);
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => NavigationBarSC()));

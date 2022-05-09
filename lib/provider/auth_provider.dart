@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
-import 'package:test/api/apiUrl.dart';
+import 'package:test/api/api_url.dart';
 import 'dart:convert';
 
 import 'package:test/models/user.dart';
-import 'package:test/preference/userPreference.dart';
+import 'package:test/preference/user_peference.dart';
 
 enum Status {
   NotLoggedIn,
@@ -56,8 +56,6 @@ class AuthProvider extends ChangeNotifier {
     var result;
     final Map<String, dynamic> responseData = json.decode(response.body);
     if (response.statusCode == 200) {
-      var userData = responseData['data'];
-      print(userData);
       User authUser = User.fromJson(responseData);
       // UserPreference().saveUser(authUser);
       if (responseData['success']) {
@@ -97,9 +95,8 @@ class AuthProvider extends ChangeNotifier {
         });
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
-
+      print(responseData['data']['email']);
       if (responseData['success']) {
-        var userData = responseData['data'];
         User authUser = User.fromJson(responseData);
         UserPreference().saveUser(authUser);
         _loggedInStatus = Status.LoggedIn;

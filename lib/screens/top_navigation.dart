@@ -1,9 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: type=lint
 import 'package:flutter/material.dart';
-import 'package:test/item/tittle.dart';
-import 'package:test/screens/BarItem/homePage.dart';
+import 'package:test/item/tittle/tittle.dart';
+import 'package:test/screens/BarItem/home_page.dart';
+import 'package:test/screens/BarItem/messeger_page.dart';
+import 'package:test/screens/BarItem/profile_page.dart';
 
 class NavigationBarSC extends StatefulWidget {
   const NavigationBarSC({Key? key}) : super(key: key);
@@ -81,7 +81,7 @@ class _NavigationBarSCState extends State<NavigationBarSC>
             ];
           },
           body: TabBarView(
-            children: <Widget>[HomePage(), HomePage(), HomePage()],
+            children: <Widget>[MessengerPage(), HomePage(), ProfilePage()],
             controller: _tabController,
           )),
     );

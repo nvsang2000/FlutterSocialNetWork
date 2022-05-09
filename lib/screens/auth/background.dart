@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+// ignore_for_file: type=lint
 class BackGround extends StatelessWidget {
   final Widget child;
   const BackGround({Key? key, required this.child}) : super(key: key);
