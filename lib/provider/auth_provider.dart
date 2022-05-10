@@ -41,44 +41,68 @@ class AuthProvider extends ChangeNotifier {
     };
 
     _signedUpStatus = Status.Registering;
-    return await post(Uri.parse(ApiUrl.signupUrl),
-            body: json.encode(apiBodyData),
-            headers: {'Content-Type': 'application/json'})
-        .then(onValue)
-        .catchError(onError);
+    Response response = await post(Uri.parse(ApiUrl.signupUrl),
+        body: json.encode(apiBodyData),
+        headers: {'Content-Type': 'application/json'});
+    var result;
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    if (response.statusCode == 200) {
+      // UserPreference().saveUser(authUser);
+      if (responseData['success']) {
+        result = {
+          'status': true,
+          'message': 'Successfully Signup',
+          'data': responseData
+        };
+      } else {
+        result = {
+          'status': false,
+          'message': 'Account already exists',
+        };
+      }
+    } else {
+      _loggedInStatus = Status.NotSignedUp;
+      notifyListeners();
+      result = {
+        'status': false,
+        'message': json.decode(response.body)['error']
+      };
+    }
+    return result;
   }
 
   notify() {
     notifyListeners();
   }
 
-  static Future<Map<String, dynamic>> onValue(Response response) async {
-    var result;
-    final Map<String, dynamic> responseData = json.decode(response.body);
-    if (response.statusCode == 200) {
-      User authUser = User.fromJson(responseData);
-      // UserPreference().saveUser(authUser);
-      if (responseData['success']) {
-        result = {
-          'status': true,
-          'message': 'Successfully Signup',
-          'data': authUser
-        };
-      } else {
-        result = {
-          'status': false,
-          'message': 'error',
-        };
-      }
-    } else {
-      result = {
-        'status': false,
-        'message': 'Successfully Signup',
-        'data': responseData
-      };
-    }
-    return result;
-  }
+  // static Future<Map<String, dynamic>> onValue(Response response) async {
+  //   var result;
+
+  //   if (response.statusCode == 200) {
+  //     final Map<String, dynamic> responseData = json.decode(response.body);
+  //     User authUser = User.fromJson(responseData);
+  //     // UserPreference().saveUser(authUser);
+  //     if (responseData['success']) {
+  //       result = {
+  //         'status': true,
+  //         'message': 'Successfully Signup',
+  //         'data': authUser
+  //       };
+  //     } else {
+  //       result = {
+  //         'status': false,
+  //         'message': 'error',
+  //       };
+  //     }
+  //   } else {
+  //     result = {
+  //       'status': false,
+  //       'message': 'Successfully Signup',
+  //       // 'data': responseData
+  //     };
+  //   }
+  //   return result;
+  // }
 
   Future<Map<String, dynamic>> login(String username, String password) async {
     var result;
@@ -95,7 +119,7 @@ class AuthProvider extends ChangeNotifier {
         });
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
-      print(responseData['data']['email']);
+
       if (responseData['success']) {
         User authUser = User.fromJson(responseData);
         UserPreference().saveUser(authUser);
@@ -104,7 +128,10 @@ class AuthProvider extends ChangeNotifier {
 
         result = {'status': true, 'message': 'Successful', 'user': authUser};
       } else
-        result = {'status': false, 'message': 'Login failed '};
+        result = {
+          'status': false,
+          'message': 'Your account or password is incorrect!'
+        };
     } else {
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
@@ -135,12 +162,12 @@ class AuthProvider extends ChangeNotifier {
     return result;
   }
 
-  static onError(error) {
-    print('the error is ${error.detail}');
-    return {
-      'status': false,
-      'message': 'UnSuccessfully Request',
-      'data': error
-    };
-  }
+  // static onError(error) {
+  //   print('the error is ${error.detail}');
+  //   return {
+  //     'status': false,
+  //     'message': 'UnSuccessfully Request',
+  //     'data': error
+  //   };
+  // }
 }

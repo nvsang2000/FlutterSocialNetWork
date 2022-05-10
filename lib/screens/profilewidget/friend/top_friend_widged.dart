@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test/screens/profilewidget/avarta_image_widged.dart';
-import 'package:test/screens/profilewidget/cover_image_friend_widget.dart';
+
 import 'package:test/screens/profilewidget/cover_image_widget.dart';
+import 'package:test/screens/profilewidget/friend/avarta_image_friend_widget.dart';
+import 'package:test/screens/profilewidget/friend/cover_image_friend_widget.dart';
 
 class TopFriendWidget extends StatelessWidget {
   const TopFriendWidget({
@@ -31,7 +33,7 @@ class TopFriendWidget extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(80)),
                   border: Border.all(width: 5, color: Colors.white)),
-              child: AvartaImageWidget(avartaHeight: avartaHeight)),
+              child: AvartaImageFriendWidget(avartaHeight: avartaHeight)),
         ),
       ],
     );
