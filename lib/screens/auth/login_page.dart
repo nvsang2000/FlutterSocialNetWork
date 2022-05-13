@@ -12,6 +12,7 @@ import 'package:test/models/user.dart';
 import 'package:test/provider/auth_provider.dart';
 import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/auth/background.dart';
+import 'package:test/screens/auth/errorr_dialog.dart';
 import 'package:test/screens/auth/signup_page.dart';
 
 import 'package:test/screens/top_navigation.dart';
@@ -53,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               isLoading = false;
             });
+            errorDialog(context, response);
           }
         });
       }

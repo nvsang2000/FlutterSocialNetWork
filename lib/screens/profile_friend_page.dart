@@ -6,9 +6,10 @@ import 'package:test/models/user.dart';
 
 import 'package:test/provider/auth_provider.dart';
 import 'package:test/provider/user_provider.dart';
+import 'package:test/screens/profilewidget/friend/top_friend_widged.dart';
 import 'package:test/screens/profilewidget/menu_2_widget.dart';
 import 'package:test/screens/profilewidget/menu_widget.dart';
-import 'package:test/screens/profilewidget/top_friend_widged.dart';
+
 import 'package:test/screens/profilewidget/top_widget.dart';
 
 class ProfileFriendPage extends StatefulWidget {

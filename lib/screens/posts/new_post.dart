@@ -9,6 +9,7 @@ import 'package:test/item/button/button.dart';
 import 'package:test/item/button/button_choose_image/button_image.dart';
 import 'package:test/item/button/button_choose_image/camera_button.dart';
 import 'package:test/item/button/button_choose_image/gallery_button.dart';
+import 'package:test/item/button/button_choose_image/image_dialog.dart';
 import 'package:test/item/textField/textfield_normal.dart';
 import 'package:test/item/tittle/list_tittle_image.dart';
 import 'package:test/item/tittle/tittle.dart';
@@ -64,40 +65,7 @@ class _NewPostState extends State<NewPost> {
             text: "Choose Image",
             icon: Icons.camera_alt_outlined,
             onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Center(child: Text("Choose Source")),
-                      actions: [
-                        TextButton(
-                          child: const Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                      content: Container(
-                        height: 145,
-                        child: Column(children: [
-                          ListTileWidget(
-                              text: "From Camera",
-                              icon: Icons.camera_alt,
-                              onClicked: () {
-                                pickImage(ImageSource.camera);
-                                Navigator.of(context).pop();
-                              }),
-                          ListTileWidget(
-                              text: "From Gallery",
-                              icon: Icons.photo,
-                              onClicked: () {
-                                pickImage(ImageSource.gallery);
-                                Navigator.of(context).pop();
-                              })
-                        ]),
-                      ),
-                    );
-                  });
+              imageDialog(context, pickImage);
             }),
         Container(
             child: file != null
