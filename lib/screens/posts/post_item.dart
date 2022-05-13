@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/screens/posts/comment/comment_screen.dart';
-import 'package:test/screens/profile_friend_page.dart';
+import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 class Stories extends StatefulWidget {
   const Stories({Key? key}) : super(key: key);

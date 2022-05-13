@@ -48,6 +48,7 @@ class AuthProvider extends ChangeNotifier {
     final Map<String, dynamic> responseData = json.decode(response.body);
     if (response.statusCode == 200) {
       // UserPreference().saveUser(authUser);
+
       if (responseData['success']) {
         result = {
           'status': true,
@@ -57,7 +58,7 @@ class AuthProvider extends ChangeNotifier {
       } else {
         result = {
           'status': false,
-          'message': 'Account already exists',
+          'message': responseData['message'],
         };
       }
     } else {
@@ -122,16 +123,18 @@ class AuthProvider extends ChangeNotifier {
 
       if (responseData['success']) {
         User authUser = User.fromJson(responseData);
+
         UserPreference().saveUser(authUser);
         _loggedInStatus = Status.LoggedIn;
         notifyListeners();
 
-        result = {'status': true, 'message': 'Successful', 'user': authUser};
-      } else
         result = {
-          'status': false,
-          'message': 'Your account or password is incorrect!'
+          'status': true,
+          'message': responseData['message'],
+          'user': authUser
         };
+      } else
+        result = {'status': false, 'message': responseData['message']};
     } else {
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();

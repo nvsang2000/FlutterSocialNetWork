@@ -8,6 +8,10 @@ class UserProvider extends ChangeNotifier {
 
   void setUser(User user) {
     _user = user;
+    // WidgetsBinding.instance!.addPostFrameCallback((_) {
+    //   notifyListeners();
+    //   // Add Your Code here.
+    // });
   }
 
   notifyListeners();

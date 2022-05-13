@@ -5,11 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:test/models/user.dart';
 import 'package:test/preference/user_peference.dart';
 import 'package:test/provider/auth_provider.dart';
+import 'package:test/provider/edit_infor_provider.dart';
 import 'package:test/provider/user_provider.dart';
 
 import 'package:test/screens/auth/login_page.dart';
 import 'package:test/screens/posts/new_post.dart';
-import 'package:test/screens/profile_friend_page.dart';
+import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 import 'package:test/screens/top_navigation.dart';
 
@@ -20,13 +21,15 @@ void main() {
 //tesss
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Future<User> getUserData() => UserPreference().getUser();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider())
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => EditInforProvider())
       ],
       child: MaterialApp(
           title: 'Flutter Demo',

@@ -13,7 +13,6 @@ class _TextFieldSearchState extends State<TextFieldSearch> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      autofocus: false,
       controller: widget.controller,
       style: TextStyle(color: Colors.black, fontSize: 16),
       decoration: InputDecoration(

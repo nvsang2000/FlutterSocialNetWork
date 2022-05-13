@@ -34,50 +34,48 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     AuthProvider auth = Provider.of<AuthProvider>(context);
     void validate() {
-      if (pass.text.trim() == comfirmPass.text.trim()) {
-        if (globalKey.currentState!.validate()) {
-          auth.signedUpStatus = Status.Registering;
-          auth.notify();
-          print("validate");
-          if (pass.text.endsWith(comfirmPass.text)) {
-            auth.signup(userName.text, pass.text).then((response) {
-              if (response['status']) {
-                setState(() {
-                  isLoading = false;
-                });
-                auth.signedUpStatus = Status.SignedUp;
-                auth.notify();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
-              } else {
-                auth.signedUpStatus = Status.NotSignedUp;
+      if (globalKey.currentState!.validate()) {
+        auth.signedUpStatus = Status.Registering;
+        auth.notify();
+        print("validate");
+        if (pass.text.endsWith(comfirmPass.text)) {
+          auth.signup(userName.text, pass.text).then((response) {
+            if (response['status']) {
+              setState(() {
+                isLoading = false;
+              });
+              auth.signedUpStatus = Status.SignedUp;
+              auth.notify();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LoginPage()));
+            } else {
+              auth.signedUpStatus = Status.NotSignedUp;
 
-                setState(() {
-                  isLoading = false;
-                });
-                errorDialog(context, response);
-                auth.notify();
-              }
-            });
-          }
+              setState(() {
+                isLoading = false;
+              });
+              errorDialog(context, response);
+              auth.notify();
+            }
+          });
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Error"),
+                  content: Text("Password and Comfirm Password are incorrect"),
+                  actions: [
+                    FlatButton(
+                      child: Text("Ok"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
         }
-      } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Error"),
-                content: Text("Password and Comfirm Password are incorrect"),
-                actions: [
-                  FlatButton(
-                    child: Text("Ok"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
       }
     }
 

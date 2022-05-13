@@ -23,7 +23,6 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
         child: TextFormField(
       textInputAction: TextInputAction.next,
       obscureText: _obscureText,
-      autofocus: true,
       controller: widget.controller,
       onChanged: widget.onChanged,
       validator: (val) {

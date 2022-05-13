@@ -16,7 +16,6 @@ class _TextFieldNormalState extends State<TextFieldNormal> {
   Widget build(BuildContext context) {
     return TextFormField(
       textInputAction: TextInputAction.next,
-      autofocus: false,
       controller: widget.controller,
       style: TextStyle(color: Colors.black, fontSize: 24),
       decoration: InputDecoration(

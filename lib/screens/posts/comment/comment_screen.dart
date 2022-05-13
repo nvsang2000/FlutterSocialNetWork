@@ -18,6 +18,7 @@ class _CommentScreenState extends State<CommentScreen> {
     User user = Provider.of<UserProvider>(context).user;
     return SafeArea(
         child: Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         child: Column(
           children: [
