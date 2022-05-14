@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test/item/button/button_choose_image/image_dialog.dart';
-import 'package:test/screens/profilewidget/avarta_image_widged.dart';
-import 'package:test/screens/profilewidget/cover_image_widget.dart';
+import 'package:test/screens/profile_widget/profile_user/avarta_image_widged.dart';
+import 'package:test/screens/profile_widget/profile_user/cover_image_widget.dart';
 
 class TopWidget extends StatefulWidget {
   const TopWidget({

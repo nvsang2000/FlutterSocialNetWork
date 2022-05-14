@@ -6,9 +6,11 @@ import 'package:test/models/user.dart';
 
 import 'package:test/provider/auth_provider.dart';
 import 'package:test/provider/user_provider.dart';
-import 'package:test/screens/profilewidget/menu_2_widget.dart';
-import 'package:test/screens/profilewidget/menu_widget.dart';
-import 'package:test/screens/profilewidget/top_widget.dart';
+
+import 'package:test/screens/profile_widget/menu_widget.dart';
+import 'package:test/screens/profile_widget/my_profile/information_user.dart';
+import 'package:test/screens/profile_widget/profile_user/menu_2_widget.dart';
+import 'package:test/screens/profile_widget/profile_user/top_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -46,6 +48,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    SizedBox(
+                      height: 10,
+                    ),
                     Text(
                       user.username!,
                       style:
@@ -55,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 20,
                     ),
                     Text(
-                      "Sở thích cá nhân.............. .................................................................................",
+                      user.about!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 15,
@@ -79,7 +84,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(
                       height: 20,
                     ),
-                    Menu2Widget(menuWidth: menuWidth)
+                    Menu2Widget(
+                      menuWidth: menuWidth,
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => Information()));
+                      },
+                    )
                   ],
                 ),
               )

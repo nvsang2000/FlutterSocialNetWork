@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test/preference/user_peference.dart';
 
 class Menu2Widget extends StatelessWidget {
   const Menu2Widget({
     Key? key,
+    required this.onTap,
     required this.menuWidth,
   }) : super(key: key);
-
+  final VoidCallback onTap;
   final double menuWidth;
 
   @override
@@ -15,13 +17,13 @@ class Menu2Widget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         GestureDetector(
-          onTap: () {},
+          onTap: onTap,
           child: Container(
             alignment: Alignment.center,
             width: menuWidth * 0.8,
             height: 35,
             child: Text(
-              "EDIT PROFILE",
+              "MY PROFILE",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             decoration: BoxDecoration(
@@ -36,7 +38,9 @@ class Menu2Widget extends StatelessWidget {
               padding: EdgeInsets.zero,
               alignment: Alignment.center,
               splashColor: Colors.transparent,
-              onPressed: () {},
+              onPressed: () {
+                UserPreference().removeUser();
+              },
               icon: Icon(Icons.settings_outlined)),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5)),
