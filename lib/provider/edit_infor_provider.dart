@@ -13,24 +13,25 @@ class EditInforProvider extends ChangeNotifier {
     Response response = await get(Uri.parse(ApiUrl.profileUrl + id),
         headers: {'Authorization': 'Bearer ' + token});
     if (response.statusCode == 200) {
-      User authUser = User.fromJson(json.decode(response.body));
+      User authUser = User.fromJson(json.decode(response.body), token);
       UserPreference().saveUser(authUser);
 
-      print(authUser);
       return authUser;
-    } else
+    } else {
       throw Exception('Failed to load.');
-  }
-
-  notify() {
-    notifyListeners();
+    }
   }
 
   Future<Map<String, dynamic>> editInfor(
       String data, String content, String id, String token) async {
     var result;
+    Map<String, dynamic>? map;
+    if (data == "gender") {
+      map = {'$data': int.parse(content)};
+    } else {
+      map = {'$data': content};
+    }
 
-    final Map<String, dynamic> map = {'$data': content};
     Response response = await post(Uri.parse(ApiUrl.profileUrl + id),
         body: json.encode(map),
         headers: {
@@ -42,8 +43,6 @@ class EditInforProvider extends ChangeNotifier {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       if (responseData['success']) {
-        getUser(token, id);
-        var user = UserPreference().getUser();
         result = {
           'status': true,
           'message': responseData['message'],
@@ -58,5 +57,9 @@ class EditInforProvider extends ChangeNotifier {
     }
 
     return result;
+  }
+
+  notify() {
+    notifyListeners();
   }
 }

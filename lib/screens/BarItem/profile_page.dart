@@ -26,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
-    AuthProvider auth = Provider.of<AuthProvider>(context);
+
     User user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(

@@ -124,7 +124,7 @@ class _StoriesState extends State<Stories> {
                 isScrollControlled: true,
                 shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30))),
+                        BorderRadius.vertical(top: Radius.circular(15))),
                 context: context,
                 builder: (context) => CommentScreen(),
               ),
