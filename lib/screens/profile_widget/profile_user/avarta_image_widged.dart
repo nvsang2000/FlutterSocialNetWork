@@ -11,7 +11,7 @@ class AvartaImageWidget extends StatelessWidget {
 
   final double avartaHeight;
   final VoidCallback onTap;
-
+//S
   @override
   Widget build(BuildContext context) {
     return SizedBox(
