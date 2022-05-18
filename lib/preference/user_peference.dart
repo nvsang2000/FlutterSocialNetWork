@@ -9,14 +9,16 @@ class UserPreference {
     if (user.username != null) {
       pref.setString('username', user.username!);
     }
-    if (user.token != null) {
-      pref.setString('token', user.token!);
-    }
+
+    // pref.setInt('gender', user.gender!);
     if (user.iduser != null) {
       pref.setString('_id', user.iduser!);
     }
     if (user.about != null) {
       pref.setString('about', user.about!);
+    }
+    if (user.gender != null) {
+      pref.setInt('gender', user.gender!);
     }
     if (user.address != null) {
       pref.setString('address', user.address!);
@@ -30,12 +32,14 @@ class UserPreference {
     if (user.coverImage != null) {
       pref.setString('cover', user.coverImage!);
     }
+
     return pref.commit();
   }
 
   Future<User> getUser() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     String? username = pref.getString("username");
+    int? gender = pref.getInt('gender');
     String? token = pref.getString("token");
     String? iduser = pref.getString("_id");
     String? about = pref.getString("about");
@@ -44,10 +48,12 @@ class UserPreference {
     String? avarta = pref.getString("avarta");
     String? cover = pref.getString("cover");
     return User(
+        // gender: gender,
         username: username,
-        token: token,
+        gender: gender,
         iduser: iduser,
         about: about,
+        token: token,
         address: address,
         birthday: birthday,
         avartaImage: avarta,
@@ -62,9 +68,17 @@ class UserPreference {
     pref.clear();
   }
 
+  Future<bool> saveToken(String token) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('token', token);
+
+    return pref.commit();
+  }
+
   Future<String?> getToken() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? token = pref.getString('token');
+    final String? token = await pref.getString('token');
+
     return token;
   }
 

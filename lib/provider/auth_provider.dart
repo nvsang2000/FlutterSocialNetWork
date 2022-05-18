@@ -120,11 +120,12 @@ class AuthProvider extends ChangeNotifier {
         });
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
-
+      print(responseData);
       if (responseData['success']) {
-        User authUser = User.fromJson(responseData);
+        User authUser = User.fromJson(responseData, responseData['token']);
 
         UserPreference().saveUser(authUser);
+        UserPreference().saveToken(responseData['token']);
         _loggedInStatus = Status.LoggedIn;
         notifyListeners();
 

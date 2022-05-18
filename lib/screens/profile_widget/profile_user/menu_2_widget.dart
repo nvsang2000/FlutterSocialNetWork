@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test/preference/user_peference.dart';
+import 'package:test/screens/auth/login_page.dart';
 
 class Menu2Widget extends StatelessWidget {
   const Menu2Widget({
@@ -40,6 +41,8 @@ class Menu2Widget extends StatelessWidget {
               splashColor: Colors.transparent,
               onPressed: () {
                 UserPreference().removeUser();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
               },
               icon: Icon(Icons.settings_outlined)),
           decoration: BoxDecoration(

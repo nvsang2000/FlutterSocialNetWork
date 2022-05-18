@@ -6,7 +6,10 @@ import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/edit_infor_provider.dart';
 import 'package:test/provider/user_provider.dart';
-import 'package:test/screens/profile_widget/my_profile/edit_infor.dart';
+
+import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_date_widget.dart';
+import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_gender_widget.dart';
+import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_text_widget.dart';
 
 class Information extends StatefulWidget {
   const Information({Key? key}) : super(key: key);
@@ -29,16 +32,17 @@ class _InformationState extends State<Information> {
       Icons.person
     ];
     var title = ["Username", "About", "Birthday", "Address", "Gender"];
-    var data = ["username", "about", "birthday", "address", "address"];
+    var data = ["username", "about", "birthday", "address", "gender"];
     var content = [
       user.username!,
       user.about!,
       user.birthday!,
       user.address!,
-      user.address!
+      user.gender!.toString()
     ];
     return SafeArea(
         child: Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(children: [
         AppBarWidget(
             name: "Information",
@@ -46,25 +50,47 @@ class _InformationState extends State<Information> {
               Navigator.pop(context);
             },
             isDone: false),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          height: MediaQuery.of(context).size.height * 0.893,
-          child: ListView.builder(
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return itemInfor(icon[index], title[index], content[index], () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => EditInfor(
-                          content: content[index],
-                          title: title[index],
-                          data: data[index],
-                        )));
-              });
-            },
+        RefreshIndicator(
+          onRefresh: () async {
+            User user = await Provider.of<UserProvider>(context).user;
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: MediaQuery.of(context).size.height * 0.893,
+            child: ListView.builder(
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return itemInfor(icon[index], title[index], content[index], () {
+                  if (title[index] == "Gender") {
+                    showBottomWidget(context, data, index, content,
+                        EditGender(data: data[index], content: content[index]));
+                  } else if (title[index] == "Birthday") {
+                    showBottomWidget(context, data, index, content,
+                        EditDate(data: data[index], content: content[index]));
+                  } else {
+                    showBottomWidget(context, data, index, content,
+                        EditText(data: data[index], content: content[index]));
+                  }
+                });
+              },
+            ),
           ),
         )
       ]),
     ));
+  }
+
+  Future<dynamic> showBottomWidget(BuildContext context, List<String> data,
+      int index, List<String> content, Widget child) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+        context: context,
+        builder: (context) => Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: child,
+            ));
   }
 
   Container itemInfor(
@@ -97,7 +123,13 @@ class _InformationState extends State<Information> {
                 width: 20,
               ),
               Text(
-                content,
+                tittle == "Gender"
+                    ? content == "0"
+                        ? "Other"
+                        : content == "1"
+                            ? "Male"
+                            : "Female"
+                    : content,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 maxLines: 1,
               )

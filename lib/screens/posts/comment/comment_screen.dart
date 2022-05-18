@@ -16,28 +16,30 @@ class _CommentScreenState extends State<CommentScreen> {
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<UserProvider>(context).user;
-    return SafeArea(
-        child: Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            AppBarWidget(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              name: "Post Comments",
-              isDone: false,
-            ),
-            commentContainer(context, user),
-            bottomBar()
-          ],
-        ),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.97,
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 5),
+            height: 10,
+            width: 100,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), color: Colors.grey),
+          ),
+          AppBarWidget(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            name: "Post Comments",
+            isDone: false,
+          ),
+          commentContainer(context, user),
+          bottomBar()
+        ],
       ),
-    ));
+    );
   }
 
   Container commentContainer(BuildContext context, User user) {
