@@ -1,17 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test/item/button/button_choose_image/change_image.dart';
 
 class AvartaImageWidget extends StatelessWidget {
   const AvartaImageWidget({
     Key? key,
+    required this.urlImage,
     required this.onTap,
     required this.avartaHeight,
   }) : super(key: key);
-
+  final String urlImage;
   final double avartaHeight;
   final VoidCallback onTap;
-//S
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -19,7 +19,7 @@ class AvartaImageWidget extends StatelessWidget {
         CircleAvatar(
           radius: avartaHeight / 2,
           backgroundColor: Colors.white,
-          backgroundImage: AssetImage("images/profile.jpg"),
+          backgroundImage: NetworkImage(urlImage),
         ),
         ChangeImageButton(
           onTap: onTap,

@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test/item/tittle/tittle.dart';
-import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 class ItemUser extends StatefulWidget {
   const ItemUser({Key? key}) : super(key: key);

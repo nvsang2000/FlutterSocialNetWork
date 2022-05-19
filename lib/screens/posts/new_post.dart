@@ -1,17 +1,15 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test/item/appBar/app_bar.dart';
-import 'package:test/item/button/button.dart';
+
 import 'package:test/item/button/button_choose_image/button_image.dart';
-import 'package:test/item/button/button_choose_image/camera_button.dart';
-import 'package:test/item/button/button_choose_image/gallery_button.dart';
+
 import 'package:test/item/button/button_choose_image/image_dialog.dart';
 import 'package:test/item/textField/textfield_normal.dart';
-import 'package:test/item/tittle/list_tittle_image.dart';
+
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/screens/posts/type_post.dart';
 
