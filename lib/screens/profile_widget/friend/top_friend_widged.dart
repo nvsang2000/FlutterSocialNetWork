@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:test/screens/profile_widget/friend/avarta_image_friend_widget.dart';

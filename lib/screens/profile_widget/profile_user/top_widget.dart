@@ -1,10 +1,17 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
-import 'package:test/item/button/button_choose_image/image_dialog.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:test/api/api_url.dart';
+import 'package:test/item/tittle/list_tittle_image.dart';
+import 'package:test/models/user.dart';
+import 'package:test/provider/edit_infor_provider.dart';
+import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/profile_widget/profile_user/avarta_image_widged.dart';
 import 'package:test/screens/profile_widget/profile_user/cover_image_widget.dart';
 
@@ -23,18 +30,36 @@ class TopWidget extends StatefulWidget {
 }
 
 class _TopWidgetState extends State<TopWidget> {
-  File? file;
+  EditInforProvider? edit;
+  bool typeImage = true;
+  XFile? _file;
+  CroppedFile? _croppedFile;
+  String? token;
+
+  void initState() {
+    super.initState();
+
+    getToken();
+  }
+
   @override
   Widget build(BuildContext context) {
+    edit = Provider.of<EditInforProvider>(context);
+    User user = Provider.of<UserProvider>(context).user;
+    UserProvider _setuser = Provider.of<UserProvider>(context);
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.center,
       children: [
         Container(
           child: CoverImageWidget(
+              urlImage: ApiUrl.imageUrl + user.coverImage!,
               coverHeight: widget.coverHeight,
               onTap: () {
                 imageDialog(context, pickImage);
+                setState(() {
+                  typeImage = true;
+                });
               }),
           margin: EdgeInsets.only(bottom: widget.avartaHeight / 2),
         ),
@@ -46,9 +71,13 @@ class _TopWidgetState extends State<TopWidget> {
                   borderRadius: BorderRadius.all(Radius.circular(80)),
                   border: Border.all(width: 5, color: Colors.white)),
               child: AvartaImageWidget(
+                urlImage: ApiUrl.imageUrl + user.avartaImage!,
                 avartaHeight: widget.avartaHeight,
                 onTap: () {
                   imageDialog(context, pickImage);
+                  setState(() {
+                    typeImage = false;
+                  });
                 },
               )),
         ),
@@ -56,17 +85,136 @@ class _TopWidgetState extends State<TopWidget> {
     );
   }
 
+  Future<void> imageDialog(
+      BuildContext context, Future pickImage(ImageSource source)) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Center(child: Text("Choose Source")),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+            content: Container(
+              height: 145,
+              child: Column(children: [
+                ListTileWidget(
+                    text: "From Camera",
+                    icon: Icons.camera_alt,
+                    onClicked: () {
+                      Navigator.of(context).pop();
+                      pickImage(ImageSource.camera);
+                    }),
+                ListTileWidget(
+                    text: "From Gallery",
+                    icon: Icons.photo,
+                    onClicked: () async {
+                      Navigator.of(context).pop();
+                      await pickImage(ImageSource.gallery);
+
+                      // _file != null
+                      //     ? Navigator.of(context).push(MaterialPageRoute(
+                      //         builder: (context) => _imageCard()))
+                      //     : Navigator.of(context).pop();
+                      ;
+                    })
+              ]),
+            ),
+          );
+        });
+  }
+
   Future pickImage(ImageSource source) async {
-    try {
-      final image = await ImagePicker().pickImage(source: source);
-      if (image == null) return;
-      final imageTemporary = File(image.path);
-      setState(() {
-        this.file = imageTemporary;
-      });
-      print(file);
-    } on PlatformException catch (e) {
-      print("Failed to pick image $e");
+    final image = await ImagePicker().pickImage(source: source);
+
+    if (image == null) return null;
+    setState(() {
+      _file = image;
+    });
+    await _cropImage();
+  }
+
+  Future<void> _cropImage() async {
+    CroppedFile? croppedFile;
+    if (_file != null) {
+      if (typeImage) {
+        croppedFile = await ImageCropper().cropImage(
+            sourcePath: _file!.path,
+            compressFormat: ImageCompressFormat.jpg,
+            compressQuality: 100,
+            aspectRatio: CropAspectRatio(ratioX: 4, ratioY: 3));
+        if (croppedFile != null) {
+          setState(() {
+            _croppedFile = croppedFile;
+          });
+          uploadImage();
+        }
+      } else {
+        croppedFile = await ImageCropper().cropImage(
+            sourcePath: _file!.path,
+            cropStyle: CropStyle.circle,
+            compressFormat: ImageCompressFormat.jpg,
+            compressQuality: 100,
+            aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1));
+        if (croppedFile != null) {
+          setState(() {
+            _croppedFile = croppedFile;
+          });
+          uploadImage();
+        }
+      }
     }
+  }
+
+  Future<http.StreamedResponse> uploadImage() async {
+    File image = File(_croppedFile!.path);
+
+    String name = image.path.split("/").last;
+    var request = http.MultipartRequest('PATCH', Uri.parse(ApiUrl.updateImage));
+    request.files.add(await http.MultipartFile.fromPath(
+      'upload_avatar',
+      image.path,
+    ));
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ' + token!
+    });
+    var response = await request.send();
+    print("url " + image.path);
+
+    print("url " + ApiUrl.updateImage);
+
+    print("reasonPhrase : ${response.reasonPhrase}");
+    print(response);
+    print(response.toString());
+    if (response.statusCode == 200) {
+      print("upload ok");
+    } else {
+      print("connect fail");
+    }
+    return response;
+  }
+
+  void _clear() {
+    setState(() {
+      _file = null;
+      _croppedFile = null;
+    });
+    Navigator.of(context).pop();
+  }
+
+  Future<String?> getToken() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String? _token = await pref.getString('token');
+    setState(() {
+      token = _token;
+    });
+    // print(token);
+    return "Ok";
   }
 }
