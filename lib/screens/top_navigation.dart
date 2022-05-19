@@ -81,7 +81,7 @@ class _NavigationBarSCState extends State<NavigationBarSC>
             ];
           },
           body: TabBarView(
-            children: <Widget>[MessengerPage(), HomePage(), ProfilePage()],
+            children: <Widget>[ProfilePage(), HomePage(), ProfilePage()],
             controller: _tabController,
           )),
     );

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test/item/button/button_choose_image/change_image.dart';
@@ -34,14 +35,18 @@ class _CoverImageWidgetState extends State<CoverImageWidget> {
           alignment: Alignment.topRight,
           height: widget.coverHeight,
           width: double.infinity,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                image: image,
-                fit: BoxFit.cover,
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30)),
+            child: CachedNetworkImage(
+              imageUrl: widget.urlImage,
+              fit: BoxFit.fill,
+              placeholder: (context, url) => Center(
+                child: CircularProgressIndicator(),
               ),
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30))),
+            ),
+          ),
         ),
         ChangeImageButton(
           onTap: widget.onTap,

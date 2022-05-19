@@ -4,8 +4,8 @@ class ApiUrl {
   static const String signupUrl = url + 'auth/register';
   static const String logoutUrl = url + 'auth/logout';
   static const String profileUrl = url + 'user/profile/';
-  static const String updateImage = url + 'user/upload-avatar';
-
+  static const String updateAvatar = url + 'user/upload-avatar';
+  static const String updateCover = url + 'user/upload-cover';
   static const String imageUrl =
       'https://yue-backend-netword.herokuapp.com/uploads/avatars/';
 }
