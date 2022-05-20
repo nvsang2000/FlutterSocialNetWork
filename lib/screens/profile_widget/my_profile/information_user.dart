@@ -50,7 +50,7 @@ class _InformationState extends State<Information> {
             onTap: () {
               Navigator.pop(context);
             },
-            isDone: false),
+            ),
         RefreshIndicator(
           onRefresh: () async {
             User user = await Provider.of<UserProvider>(context).user;

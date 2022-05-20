@@ -41,7 +41,7 @@ class _CoverImageWidgetState extends State<CoverImageWidget> {
                 bottomRight: Radius.circular(30)),
             child: CachedNetworkImage(
               imageUrl: widget.urlImage,
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
               placeholder: (context, url) => Center(
                 child: CircularProgressIndicator(),
               ),

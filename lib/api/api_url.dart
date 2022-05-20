@@ -8,4 +8,6 @@ class ApiUrl {
   static const String updateCover = url + 'user/upload-cover';
   static const String imageUrl =
       'https://yue-backend-netword.herokuapp.com/uploads/avatars/';
+  static const String newPostUrl = url + 'user/new-post';
+  static const String getAllPostUrl = url + 'all-post/';
 }

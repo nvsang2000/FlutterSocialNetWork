@@ -1,5 +1,8 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:test/models/post.dart';
+import 'package:test/provider/post_provider.dart';
 import 'package:test/screens/posts/new_post.dart';
 import 'package:test/screens/posts/post_item.dart';
 
@@ -11,58 +14,99 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Post> listPost = [];
+  PostProvider? postProvider;
+  @override
+  void initState() {
+    super.initState();
+    // TODO: implement initState
+  }
+
   @override
   Widget build(BuildContext context) {
+    postProvider = Provider.of<PostProvider>(context);
+    postProvider!.getAllPost();
+    listPost = postProvider!.listPOST;
+
+    // print(listPost[1].images[1]);
+
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 240, 240, 240),
       resizeToAvoidBottomInset: true,
-      body: Builder(
-        builder: ((context) => CustomScrollView(
-              // scrollDirection: Axis.vertical,
-              slivers: <Widget>[
-                SliverOverlapInjector(
-                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                        context)),
+      body: RefreshIndicator(
+        onRefresh: () async => await postProvider!.getAllPost(),
+        child: Builder(
+          builder: ((context) => CustomScrollView(
+                // scrollDirection: Axis.vertical,
+                slivers: <Widget>[
+                  SliverOverlapInjector(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                          context)),
 
-                SliverFixedExtentList(
+                  SliverFixedExtentList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        return Container(
+                          padding: EdgeInsets.only(top: 5),
+                          color: Colors.white,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              CreatNewPost(),
+                              ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                itemCount: 5,
+                                itemBuilder: (context, index) => UserOnl(),
+                              )
+                            ],
+                          ),
+                        );
+                      }, childCount: 1),
+                      itemExtent: 100),
+                  SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      return Container(
-                        padding: EdgeInsets.only(top: 5),
-                        color: Colors.white,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            CreatNewPost(),
-                            ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, index) => UserOnl(),
-                            )
-                          ],
-                        ),
-                      );
+                      return FutureBuilder(
+                          future: postProvider!.getAllPost(),
+                          builder: (context,
+                                  AsyncSnapshot<List<Post>> snapshot) =>
+                              snapshot.data != null
+                                  ? ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) => Stories(
+                                          content:
+                                              snapshot.data![index].content,
+                                          image: snapshot.data![index].images,
+                                          type: snapshot.data![index].type),
+                                      itemCount: listPost.length,
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(
+                                          top: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.3),
+                                      child: Center(
+                                        child: SizedBox(
+                                          child: CircularProgressIndicator(),
+                                          height: 50,
+                                          width: 50,
+                                        ),
+                                      ),
+                                    ));
                     }, childCount: 1),
-                    itemExtent: 100),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => Stories(),
-                      itemCount: 5,
-                    );
-                  }, childCount: 1),
-                )
-                // SliverToBoxAdapter(
-                //   child: ListView.builder(
+                  )
+                  // SliverToBoxAdapter(
+                  //   child: ListView.builder(
 
-                //     shrinkWrap: true,
-                //     itemBuilder: (context, index) => Stories(),
-                //     itemCount: 5,
-                //   ),
-                // )
-              ],
-            )),
+                  //     shrinkWrap: true,
+                  //     itemBuilder: (context, index) => Stories(),
+                  //     itemCount: 5,
+                  //   ),
+                  // )
+                ],
+              )),
+        ),
       ),
     );
   }
