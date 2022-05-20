@@ -38,17 +38,16 @@ class PostProvider extends ChangeNotifier {
 
   List<Post> listPost = [];
   Future<List<Post>> getAllPost() async {
-    List<Post> newListPost = [];
-    var result;
+  
     Response response = await get(Uri.parse(ApiUrl.getAllPostUrl));
 
     if (response.statusCode == 200) {
       var responseData = jsonDecode(response.body);
       for (Map i in responseData['posts']) {
-        Post post =
-            Post(content: i['content'], images: i['images'], type: i['type']);
-        newListPost.add(post);
-        listPost = newListPost;
+        Post post = await Post(
+            content: i['content'], images: i['images'], type: i['type']);
+        listPost.add(post);
+       
       }
       // notifyListeners();
       return listPost;
@@ -58,10 +57,6 @@ class PostProvider extends ChangeNotifier {
   }
 
  
-
-  get listPOST {
-    return listPost;
-  }
 
   notify() {
     notifyListeners();

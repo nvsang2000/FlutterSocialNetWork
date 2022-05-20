@@ -60,10 +60,12 @@ class _StoriesState extends State<Stories> {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
-        
-        margin: EdgeInsets.only(top: 15),
+        margin: EdgeInsets.only(bottom: 15),
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),color: Colors.white,),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white,
+        ),
         child: Column(
           children: [
             inforUser(),
