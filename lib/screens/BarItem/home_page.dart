@@ -1,5 +1,8 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:test/models/post.dart';
+import 'package:test/provider/post_provider.dart';
 import 'package:test/screens/posts/new_post.dart';
 import 'package:test/screens/posts/post_item.dart';
 
@@ -12,8 +15,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+
+    // TODO: implement initState
+  }
+
+  @override
   Widget build(BuildContext context) {
+    PostProvider postProvider = Provider.of<PostProvider>(context);
+
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 240, 240, 240),
       resizeToAvoidBottomInset: true,
       body: Builder(
         builder: ((context) => CustomScrollView(
@@ -45,12 +58,33 @@ class _HomePageState extends State<HomePage> {
                     itemExtent: 100),
                 SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
-                    return ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => Stories(),
-                      itemCount: 5,
-                    );
+                    return FutureBuilder(
+                        future: postProvider.getAllPost(),
+                        builder: (context,
+                                AsyncSnapshot<List<Post>> snapshot) =>
+                            snapshot.data != null
+                                ? ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) => Stories(
+                                        content: snapshot.data![index].content,
+                                        image: snapshot.data![index].images,
+                                        type: snapshot.data![index].type),
+                                    itemCount: snapshot.data!.length,
+                                  )
+                                : Container(
+                                    margin: EdgeInsets.only(
+                                        top:
+                                            MediaQuery.of(context).size.height *
+                                                0.3),
+                                    child: Center(
+                                      child: SizedBox(
+                                        child: CircularProgressIndicator(),
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
+                                  ));
                   }, childCount: 1),
                 )
                 // SliverToBoxAdapter(

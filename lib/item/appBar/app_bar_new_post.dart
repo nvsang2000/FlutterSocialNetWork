@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class AppBarWidget extends StatelessWidget {
-  const AppBarWidget(
-      {Key? key, required this.name, required this.onTap})
+class AppBarPostWidget extends StatelessWidget {
+  const AppBarPostWidget(
+      {Key? key, required this.name, required this.onTap, required this.onDone})
       : super(key: key);
   final String name;
   final VoidCallback onTap;
-  
+  final VoidCallback onDone;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +29,14 @@ class AppBarWidget extends StatelessWidget {
             ),
           ],
         ),
-        
+        Container(
+            child: TextButton(
+          onPressed: onDone,
+          child: Text(
+            "Post",
+            style: TextStyle(fontSize: 16, color: Colors.black),
+          ),
+        ))
       ]),
     );
   }

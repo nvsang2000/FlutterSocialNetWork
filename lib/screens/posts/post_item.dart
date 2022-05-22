@@ -1,39 +1,57 @@
+import 'dart:async';
+import 'dart:ffi';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
+import 'package:test/api/api_url.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/screens/posts/comment/comment_screen.dart';
+import 'package:test/screens/posts/type_post.dart';
 import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 class Stories extends StatefulWidget {
-  const Stories({Key? key}) : super(key: key);
-
+  const Stories(
+      {Key? key,
+      required this.content,
+      required this.image,
+      required this.type})
+      : super(key: key);
+  final String content;
+  final List<dynamic> image;
+  final int type;
   @override
   State<Stories> createState() => _StoriesState();
 }
 
 class _StoriesState extends State<Stories> {
-  Text txt = Text(
-    "Xem thêm",
-    style: TextStyle(fontWeight: FontWeight.bold),
-  );
   bool isLike = false;
-  String post =
-      "Google Dịch là một công cụ dịch thuật trực tuyến do Google phát triển. Nó cung cấp giao diện trang web, ứng dụng trên thiết bị di động cho hệ điều hành Android và iOS và giao diện lập trình ứng dụng giúp nhà phát triển xây dựng tiện ích mở rộng trình duyệt web và ứng dụng phần mềm";
   late String shortText;
   late String longText;
-  bool isText = true;
+  bool isText = false;
   int likeCount = 10;
   String time =
       DateTime.now().hour.toString() + ":" + DateTime.now().minute.toString();
+  var typePostRow = [
+    TypePost(
+      type: "Friend",
+      icon: Icons.people,
+      isType: true,
+    ),
+    TypePost(
+      type: "Just me",
+      icon: Icons.person,
+      isType: true,
+    )
+  ];
   @override
   void initState() {
     super.initState();
-
-    if (post.length > 200) {
-      shortText = post.substring(0, 200);
-      longText = post.substring(200, post.length);
+    if (widget.content.length > 200) {
+      shortText = widget.content.substring(0, 200);
+      longText = widget.content.substring(200, widget.content.length);
     } else {
-      shortText = post;
+      shortText = widget.content;
       longText = "";
     }
   }
@@ -42,34 +60,51 @@ class _StoriesState extends State<Stories> {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        // decoration: BoxDecoration(
-        //     borderRadius: BorderRadius.circular(10),
-        //     color: Colors.white,
-        //     boxShadow: [BoxShadow(color: Color(0xFF6F35A5), blurRadius: 5)]),
+        margin: EdgeInsets.only(bottom: 15),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white,
+        ),
         child: Column(
-          children: [inforUser(), textContent(), imageContent(context)],
+          children: [
+            inforUser(),
+            textContent(),
+            imageContent(context),
+          ],
         ),
       ),
     );
   }
 
-  Container imageContent(BuildContext context) {
-    return Container(
-      height: 250,
-      width: MediaQuery.of(context).size.width - 20,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage('images/story.jpg'), fit: BoxFit.cover),
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        color: Colors.white,
-      ),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 200,
-          ),
-          Container(
+  Stack imageContent(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          child: widget.image.length > 0
+              ? ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        "https://yue-backend-netword.herokuapp.com/uploads/avatars/62878fa75e6a0e159d2ba15d-1653061173876.jpg",
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                )
+              : Container(
+                  height: 50,
+                ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
@@ -81,8 +116,8 @@ class _StoriesState extends State<Stories> {
             ),
             child: Interactive(),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -168,11 +203,12 @@ class _StoriesState extends State<Stories> {
         });
       },
       child: Container(
+        alignment: Alignment.topLeft,
         padding: EdgeInsets.symmetric(vertical: 10),
         child: RichText(
             text: isText
                 ? TextSpan(style: ColorBlack(), children: [
-                    TextSpan(text: shortText),
+                    TextSpan(text: shortText, style: TextStyle(fontSize: 15)),
                     TextSpan(
                         text: "...See more",
                         style: TextStyle(
@@ -183,16 +219,6 @@ class _StoriesState extends State<Stories> {
                     TextSpan(text: shortText),
                     TextSpan(text: longText)
                   ], style: ColorBlack())),
-        // Text(isText
-        //     ? shortText +
-        //         TextSpan(
-        //                 text: "...Xem thêm",
-        //                 style: TextStyle(
-        //                     fontWeight: FontWeight.bold,
-        //                     fontSize: 40,
-        //                     color: Colors.teal))
-        //             .toPlainText()
-        //     : shortText + longText),
       ),
     );
   }
@@ -225,7 +251,9 @@ class _StoriesState extends State<Stories> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Tittle(text: "Văn Liệu", size: 18, color: Colors.black),
-                  Text(time + " Ago")
+                  Row(
+                    children: [typePostRow[widget.type], Text(time + " Ago")],
+                  )
                 ],
               )
             ],
@@ -236,5 +264,5 @@ class _StoriesState extends State<Stories> {
     );
   }
 
-  TextStyle ColorBlack() => TextStyle(color: Colors.black, fontSize: 16);
+  TextStyle ColorBlack() => TextStyle(color: Colors.black, fontSize: 20);
 }

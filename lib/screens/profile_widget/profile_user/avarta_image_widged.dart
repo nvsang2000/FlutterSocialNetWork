@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:test/item/button/button_choose_image/change_image.dart';
 
@@ -16,10 +17,17 @@ class AvartaImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       child: Stack(children: [
-        CircleAvatar(
-          radius: avartaHeight / 2,
-          backgroundColor: Colors.white,
-          backgroundImage: NetworkImage(urlImage),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: CachedNetworkImage(
+            imageUrl: urlImage,
+            height: avartaHeight,
+            width: avartaHeight,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
         ),
         ChangeImageButton(
           onTap: onTap,

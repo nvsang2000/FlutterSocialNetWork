@@ -33,7 +33,7 @@ class _CommentScreenState extends State<CommentScreen> {
               Navigator.pop(context);
             },
             name: "Post Comments",
-            isDone: false,
+           
           ),
           commentContainer(context, user),
           bottomBar()

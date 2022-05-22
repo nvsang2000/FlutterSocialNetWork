@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:test/item/appBar/app_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test/api/api_url.dart';
+import 'package:test/item/appBar/app_bar_new_post.dart';
 
 import 'package:test/item/button/button_choose_image/button_image.dart';
 
@@ -11,6 +15,11 @@ import 'package:test/item/button/button_choose_image/image_dialog.dart';
 import 'package:test/item/textField/textfield_normal.dart';
 
 import 'package:test/item/tittle/tittle.dart';
+import 'package:test/models/post.dart';
+import 'package:test/models/user.dart';
+
+import 'package:test/provider/post_provider.dart';
+import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/posts/type_post.dart';
 
 class NewPost extends StatefulWidget {
@@ -21,26 +30,55 @@ class NewPost extends StatefulWidget {
 }
 
 class _NewPostState extends State<NewPost> {
+  User? _user;
   File? file;
+  Post? post;
+  PostProvider? _post;
   TextEditingController controller = TextEditingController();
   // bool isImage = false;
   int typePostInt = 0;
-  var typePostRow = TypePost(
-    type: "Public",
-    icon: Icons.public_sharp,
-    isType: true,
-  );
+  var typePostRow = [
+    TypePost(
+      type: "Friend",
+      icon: Icons.people,
+      isType: true,
+    ),
+    TypePost(
+      type: "Just me",
+      icon: Icons.person,
+      isType: true,
+    )
+  ];
+  var icon = [Icons.people, Icons.person];
+  var tittle = ['Friend', 'Just me'];
+  var ints = [0, 1];
+  String? token;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    getToken();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    _user = Provider.of<UserProvider>(context).user;
+    _post = Provider.of<PostProvider>(context);
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Column(children: [
-          AppBarWidget(
+          AppBarPostWidget(
             name: "Create Post",
             onTap: () => Navigator.pop(context),
-            isDone: true,
+            onDone: () {
+              _post!.newPost(token!, controller.text, typePostInt.toString(), file!);
+
+             
+            },
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -121,7 +159,7 @@ class _NewPostState extends State<NewPost> {
       if (image == null) return;
       final imageTemporary = File(image.path);
       setState(() {
-        this.file = imageTemporary;
+        file = imageTemporary;
       });
     } on PlatformException catch (e) {
       print("Failed to pick image $e");
@@ -134,22 +172,23 @@ class _NewPostState extends State<NewPost> {
       children: [
         Row(
           children: [
-            Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                color: Color(0xFF6F35A5),
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(color: Colors.black, width: 1),
-                image: DecorationImage(
-                    image: AssetImage('images/profile.jpg'), fit: BoxFit.cover),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: CachedNetworkImage(
+                imageUrl: ApiUrl.imageUrl + _user!.avartaImage!,
+                height: 50,
+                width: 50,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             ),
             SizedBox(
               width: 10,
             ),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Tittle(text: "Văn Liệu", size: 18, color: Colors.black),
+              Tittle(text: _user!.username!, size: 18, color: Colors.black),
               SizedBox(
                 height: 5,
               ),
@@ -164,82 +203,104 @@ class _NewPostState extends State<NewPost> {
   GestureDetector chooseTypeDialog() {
     return GestureDetector(
       onTap: () {
-        showDialog(
+        showModalBottomSheet(
+            isScrollControlled: true,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
             context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return AlertDialog(
-                title: Center(child: Text("Choose Type Post")),
-                content: Container(
-                    height: 175,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Who can see your posts?",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          chooseType()
-                        ])),
-                actions: [
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+            builder: (context) => Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: Container(
+                    height: 200,
+                    child: Column(children: [
+                      Expanded(
+                          flex: 2,
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 5),
+                                height: 10,
+                                width: 100,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.grey),
+                              ),
+                              Text(
+                                "Who can see your posts?",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          )),
+                      selectTypePost(context, tittle[0], icon[0], ints[0]),
+                      selectTypePost(context, tittle[1], icon[1], ints[1]),
+                    ]),
                   ),
-                ],
-              );
-            });
+                ));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10), color: Colors.grey[300]),
-        child: typePostRow,
+        child: typePostRow[typePostInt],
       ),
     );
   }
 
-  ListView chooseType() {
-    final value = [
-      TypePost(type: "Public", icon: Icons.public_sharp, isType: false),
-      TypePost(type: "Friend", icon: Icons.people, isType: false),
-      TypePost(type: "Just Me", icon: Icons.person, isType: false)
-    ];
-    final value2 = [
-      TypePost(type: "Public", icon: Icons.public_sharp, isType: true),
-      TypePost(type: "Friend", icon: Icons.people, isType: true),
-      TypePost(type: "Just Me", icon: Icons.person, isType: true)
-    ];
-    return ListView.builder(
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              primary: Colors.grey[200],
-              textStyle:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          onPressed: () {
-            if (this.mounted) {
-              setState(() {
-                this.typePostRow = value2[index];
-                this.typePostInt = index;
-                Navigator.pop(context);
-              });
-            }
+  Expanded selectTypePost(
+      BuildContext context, String tittle, IconData icon, int ints) {
+    return Expanded(
+        flex: 3,
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              typePostInt = ints;
+            });
+            Navigator.of(context).pop();
           },
           child: Container(
-            child: value[index],
-            height: 30,
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                      color: typePostInt == ints
+                          ? Color.fromARGB(255, 103, 187, 255)
+                          : Color.fromARGB(255, 223, 223, 223))
+                ]),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Radio(
+                      value: ints,
+                      groupValue: typePostInt,
+                      onChanged: (value) {}),
+                ),
+                Expanded(
+                    flex: 5,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Tittle(text: tittle, size: 24, color: Colors.black),
+                        Icon(icon)
+                      ],
+                    )),
+              ],
+            ),
           ),
-        );
-      },
-      itemCount: value.length,
-    );
+        ));
+  }
+
+  Future<String?> getToken() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String? _token = await pref.getString('token');
+    setState(() {
+      token = _token;
+    });
+    // print(token);
+    return "Ok";
   }
 }
