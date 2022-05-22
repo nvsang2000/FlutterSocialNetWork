@@ -1,23 +1,16 @@
 import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/api/api_url.dart';
-import 'package:test/item/appBar/app_bar_new_post.dart';
-
 import 'package:test/item/button/button_choose_image/button_image.dart';
-
 import 'package:test/item/button/button_choose_image/image_dialog.dart';
 import 'package:test/item/textField/textfield_normal.dart';
-
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/post.dart';
 import 'package:test/models/user.dart';
-
 import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/posts/type_post.dart';
@@ -31,6 +24,7 @@ class NewPost extends StatefulWidget {
 
 class _NewPostState extends State<NewPost> {
   User? _user;
+  bool postBool = false;
   File? file;
   Post? post;
   PostProvider? _post;
@@ -56,8 +50,6 @@ class _NewPostState extends State<NewPost> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
     getToken();
     super.initState();
   }
@@ -71,15 +63,7 @@ class _NewPostState extends State<NewPost> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Column(children: [
-          AppBarPostWidget(
-            name: "Create Post",
-            onTap: () => Navigator.pop(context),
-            onDone: () {
-              _post!.newPost(token!, controller.text, typePostInt.toString(), file!);
-
-             
-            },
-          ),
+          appBar(),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Column(children: [
@@ -92,7 +76,52 @@ class _NewPostState extends State<NewPost> {
       ),
     );
   }
-
+ Container appBar(){
+   return Container(
+            height: 50,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        splashColor: Colors.transparent,
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.arrow_back_ios, size: 20),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "Create Post",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Container(
+                      child: postBool
+                          ? Container(child: CircularProgressIndicator())
+                          : TextButton(
+                              onPressed: () async {
+                                setState(() {
+                                  postBool = true;
+                                });
+                                await _post!.newPost(token!, controller.text,
+                                    typePostInt.toString(), file!);
+                                _post!.notify();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                "Post",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            ))
+                ]),
+          );
+ }
   Row chooseImage(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -174,14 +203,34 @@ class _NewPostState extends State<NewPost> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(100),
-              child: CachedNetworkImage(
-                imageUrl: ApiUrl.imageUrl + _user!.avartaImage!,
+              child: Image.network(
+                ApiUrl.imageUrl + _user!.avatarImage!,
                 height: 50,
                 width: 50,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Center(
-                  child: CircularProgressIndicator(),
-                ),
+                loadingBuilder: (context, child, loadingProgress) =>
+                    loadingProgress == null
+                        ? child
+                        : Container(
+                            height: 50,
+                            width: 50,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            )),
+                errorBuilder: (context, url, StackTrace? error) {
+                  return Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF6F35A5),
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: Colors.black, width: 1),
+                      image: DecorationImage(
+                          image: AssetImage('images/profile.jpg'),
+                          fit: BoxFit.cover),
+                    ),
+                  );
+                },
               ),
             ),
             SizedBox(

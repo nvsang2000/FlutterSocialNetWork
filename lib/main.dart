@@ -1,17 +1,13 @@
 // ignore_for_file: type=lint
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:test/models/user.dart';
 import 'package:test/preference/user_peference.dart';
 import 'package:test/provider/auth_provider.dart';
 import 'package:test/provider/edit_infor_provider.dart';
 import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
-
 import 'package:test/screens/auth/login_page.dart';
-import 'package:test/screens/posts/new_post.dart';
-
 import 'package:test/screens/top_navigation.dart';
 
 void main() {

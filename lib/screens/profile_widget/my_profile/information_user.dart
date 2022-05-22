@@ -7,7 +7,6 @@ import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/edit_infor_provider.dart';
 import 'package:test/provider/user_provider.dart';
-
 import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_date_widget.dart';
 import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_gender_widget.dart';
 import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_text_widget.dart';

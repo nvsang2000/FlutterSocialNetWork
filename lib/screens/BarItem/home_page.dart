@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/models/post.dart';
 import 'package:test/provider/post_provider.dart';
 import 'package:test/screens/posts/new_post.dart';
@@ -14,17 +15,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Post> list = [];
+  String? token;
   @override
   void initState() {
     super.initState();
-
-    // TODO: implement initState
+    getToken();
   }
 
   @override
   Widget build(BuildContext context) {
     PostProvider postProvider = Provider.of<PostProvider>(context);
-
+    postProvider.getAllPost;
+    list = postProvider.getAllList;
+    print(list.length);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 240, 240, 240),
       resizeToAvoidBottomInset: true,
@@ -35,7 +39,6 @@ class _HomePageState extends State<HomePage> {
                 SliverOverlapInjector(
                     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
                         context)),
-
                 SliverFixedExtentList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       return Container(
@@ -57,48 +60,81 @@ class _HomePageState extends State<HomePage> {
                     }, childCount: 1),
                     itemExtent: 100),
                 SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return FutureBuilder(
-                        future: postProvider.getAllPost(),
-                        builder: (context,
-                                AsyncSnapshot<List<Post>> snapshot) =>
-                            snapshot.data != null
-                                ? ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, index) => Stories(
-                                        content: snapshot.data![index].content,
-                                        image: snapshot.data![index].images,
-                                        type: snapshot.data![index].type),
-                                    itemCount: snapshot.data!.length,
-                                  )
-                                : Container(
-                                    margin: EdgeInsets.only(
-                                        top:
-                                            MediaQuery.of(context).size.height *
-                                                0.3),
-                                    child: Center(
-                                      child: SizedBox(
-                                        child: CircularProgressIndicator(),
-                                        height: 50,
-                                        width: 50,
-                                      ),
-                                    ),
-                                  ));
-                  }, childCount: 1),
+                  delegate: SliverChildBuilderDelegate(
+                      (context, index) => token != null
+                          ? FutureBuilder(
+                              future: postProvider.getAllPost(token!),
+                              builder: (context,
+                                      AsyncSnapshot<List<Post>> snapshot) =>
+                                  snapshot.data != null
+                                      ? ListView.builder(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) =>
+                                              Stories(
+                                                  token: token!,
+                                                  userID: snapshot
+                                                      .data![index].userID,
+                                                  content: snapshot
+                                                      .data![index].content,
+                                                  image: snapshot
+                                                      .data![index].images,
+                                                  type: snapshot
+                                                      .data![index].type,
+                                                  avatar: snapshot
+                                                      .data![index].avatar,
+                                                  like: snapshot
+                                                      .data![index].like,
+                                                  createdAt: snapshot
+                                                      .data![index].createdAt,
+                                                  username: snapshot
+                                                      .data![index].username),
+                                          itemCount: snapshot.data!.length,
+                                        )
+                                      : Container(
+                                          margin: EdgeInsets.only(
+                                              top: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.3),
+                                          child: Center(
+                                            child: SizedBox(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                              height: 50,
+                                              width: 50,
+                                            ),
+                                          ),
+                                        ))
+                          : Container(
+                              margin: EdgeInsets.only(
+                                  top:
+                                      MediaQuery.of(context).size.height * 0.3),
+                              child: Center(
+                                child: SizedBox(
+                                  child: CircularProgressIndicator(),
+                                  height: 50,
+                                  width: 50,
+                                ),
+                              ),
+                            ),
+                      childCount: 1),
                 )
-                // SliverToBoxAdapter(
-                //   child: ListView.builder(
-
-                //     shrinkWrap: true,
-                //     itemBuilder: (context, index) => Stories(),
-                //     itemCount: 5,
-                //   ),
-                // )
               ],
             )),
       ),
     );
+  }
+
+  Future<String?> getToken() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String? _token = await pref.getString('token');
+    setState(() {
+      token = _token;
+    });
+    // print(token);
+    return "Ok";
   }
 }
 

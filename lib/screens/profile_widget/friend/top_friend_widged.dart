@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:test/screens/profile_widget/friend/avarta_image_friend_widget.dart';
 import 'package:test/screens/profile_widget/friend/cover_image_friend_widget.dart';
 
