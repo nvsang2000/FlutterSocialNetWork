@@ -1,5 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test/item/button/button_choose_image/change_image.dart';
 
@@ -20,10 +18,11 @@ class CoverImageWidget extends StatefulWidget {
 
 class _CoverImageWidgetState extends State<CoverImageWidget> {
   var image;
+  bool errorFoundInImageLoad = false;
   @override
   void initState() {
     image = NetworkImage(widget.urlImage);
-    // TODO: implement initState
+
     super.initState();
   }
 
@@ -39,12 +38,28 @@ class _CoverImageWidgetState extends State<CoverImageWidget> {
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30)),
-            child: CachedNetworkImage(
-              imageUrl: widget.urlImage,
+            // child: CachedNetworkImage(
+            //     imageUrl: widget.urlImage,
+            //     fit: BoxFit.cover,
+            //     placeholder: (context, url) => Center(
+            //           child: CircularProgressIndicator(),
+            //         ),
+            //     errorWidget: (context, url, error) => new Icon(Icons.error)),
+            child: Image.network(
+              widget.urlImage,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Center(
-                child: CircularProgressIndicator(),
-              ),
+              loadingBuilder: (context, child, loadingProgress) =>
+                  loadingProgress == null
+                      ? child
+                      : Container(
+                          height: widget.coverHeight,
+                          width: double.infinity,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          )),
+              errorBuilder: (context, url, StackTrace? error) {
+                return Image.asset("images/background.png",fit: BoxFit.cover,);
+              },
             ),
           ),
         ),

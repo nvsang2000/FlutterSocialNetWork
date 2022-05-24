@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/user_provider.dart';
-
 import 'package:test/screens/profile_widget/menu_widget.dart';
 import 'package:test/screens/profile_widget/my_profile/information_user.dart';
 import 'package:test/screens/profile_widget/profile_user/menu_2_widget.dart';

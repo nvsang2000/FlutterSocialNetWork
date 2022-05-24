@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:test/item/button/button.dart';
 import 'package:test/item/button/button_check.dart';
-
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/user.dart';
-
 import 'package:test/provider/edit_infor_provider.dart';
 import 'package:test/provider/user_provider.dart';
 

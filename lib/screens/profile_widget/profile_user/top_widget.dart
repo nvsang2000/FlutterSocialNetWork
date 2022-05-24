@@ -1,14 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:http/http.dart' as http;
 import 'package:test/api/api_url.dart';
 import 'package:test/item/tittle/list_tittle_image.dart';
 import 'package:test/models/user.dart';
@@ -51,6 +48,7 @@ class _TopWidgetState extends State<TopWidget> {
     edit = Provider.of<EditInforProvider>(context);
     user = Provider.of<UserProvider>(context).user;
     _setuser = Provider.of<UserProvider>(context);
+
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.center,
@@ -74,16 +72,18 @@ class _TopWidgetState extends State<TopWidget> {
                   color: Colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(80)),
                   border: Border.all(width: 5, color: Colors.white)),
-              child: AvartaImageWidget(
-                urlImage: ApiUrl.imageUrl + user!.avartaImage!,
-                avartaHeight: widget.avartaHeight,
-                onTap: () {
-                  imageDialog(context, pickImage);
-                  setState(() {
-                    typeImage = false;
-                  });
-                },
-              )),
+              child: user!.avatarImage != null
+                  ? AvartaImageWidget(
+                      urlImage: ApiUrl.imageUrl + user!.avatarImage!,
+                      avartaHeight: widget.avartaHeight,
+                      onTap: () {
+                        imageDialog(context, pickImage);
+                        setState(() {
+                          typeImage = false;
+                        });
+                      },
+                    )
+                  : CircularProgressIndicator()),
         ),
       ],
     );

@@ -26,8 +26,8 @@ class UserPreference {
     if (user.birthday != null) {
       pref.setString('birthday', user.birthday!.toString());
     }
-    if (user.avartaImage != null) {
-      pref.setString('avarta', user.avartaImage!);
+    if (user.avatarImage != null) {
+      pref.setString('avatar', user.avatarImage!);
     }
     if (user.coverImage != null) {
       pref.setString('cover', user.coverImage!);
@@ -45,7 +45,7 @@ class UserPreference {
     String? about = pref.getString("about");
     String? address = pref.getString("address");
     String? birthday = pref.getString("birthday");
-    String? avarta = pref.getString("avarta");
+    String? avatar = pref.getString("avatar");
     String? cover = pref.getString("cover");
     return User(
         // gender: gender,
@@ -56,7 +56,7 @@ class UserPreference {
         token: token,
         address: address,
         birthday: birthday,
-        avartaImage: avarta,
+        avatarImage: avatar,
         coverImage: cover);
   }
 

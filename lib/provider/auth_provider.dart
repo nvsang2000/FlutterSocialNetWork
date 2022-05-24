@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:test/api/api_url.dart';
 import 'dart:convert';
-
 import 'package:test/models/user.dart';
 import 'package:test/preference/user_peference.dart';
 
@@ -76,34 +74,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // static Future<Map<String, dynamic>> onValue(Response response) async {
-  //   var result;
-
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> responseData = json.decode(response.body);
-  //     User authUser = User.fromJson(responseData);
-  //     // UserPreference().saveUser(authUser);
-  //     if (responseData['success']) {
-  //       result = {
-  //         'status': true,
-  //         'message': 'Successfully Signup',
-  //         'data': authUser
-  //       };
-  //     } else {
-  //       result = {
-  //         'status': false,
-  //         'message': 'error',
-  //       };
-  //     }
-  //   } else {
-  //     result = {
-  //       'status': false,
-  //       'message': 'Successfully Signup',
-  //       // 'data': responseData
-  //     };
-  //   }
-  //   return result;
-  // }
 
   Future<Map<String, dynamic>> login(String username, String password) async {
     var result;

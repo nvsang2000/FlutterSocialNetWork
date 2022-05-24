@@ -1,7 +1,3 @@
-import 'dart:async';
-import 'dart:ffi';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:test/api/api_url.dart';
@@ -15,11 +11,23 @@ class Stories extends StatefulWidget {
       {Key? key,
       required this.content,
       required this.image,
-      required this.type})
+      required this.type,
+      required this.username,
+      required this.avatar,
+      required this.createdAt,
+      required this.like,
+      required this.userID,
+      required this.token})
       : super(key: key);
   final String content;
   final List<dynamic> image;
   final int type;
+  final String username;
+  final List<dynamic> like;
+  final String avatar;
+  final String createdAt;
+  final String userID;
+  final String token;
   @override
   State<Stories> createState() => _StoriesState();
 }
@@ -85,15 +93,25 @@ class _StoriesState extends State<Stories> {
           child: widget.image.length > 0
               ? ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(30)),
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        "https://yue-backend-netword.herokuapp.com/uploads/avatars/62878fa75e6a0e159d2ba15d-1653061173876.jpg",
+                  child: Image.network(
+                    ApiUrl.imageUrl+widget.image[0],
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                    placeholder: (context, url) => Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    errorBuilder: (context, url, StackTrace? error) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                        child: Image.asset(
+                          "images/background.png",
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) =>
+                        loadingProgress == null
+                            ? child
+                            : Container(
+                                child: Center(
+                                child: CircularProgressIndicator(),
+                              )),
                   ),
                 )
               : Container(
@@ -225,23 +243,46 @@ class _StoriesState extends State<Stories> {
 
   GestureDetector inforUser() {
     return GestureDetector(
-      onTap: () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => ProfileFriendPage())),
+      onTap: () async {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                ProfileFriendPage(userID: widget.userID, token: widget.token)));
+      },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  color: Color(0xFF6F35A5),
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(color: Colors.black, width: 1),
-                  image: DecorationImage(
-                      image: AssetImage('images/profile.jpg'),
-                      fit: BoxFit.cover),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image.network(
+                  ApiUrl.imageUrl+widget.avatar,
+                  height: 50,
+                  width: 50,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) =>
+                      loadingProgress == null
+                          ? child
+                          : Container(
+                              height: 50,
+                              width: 50,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              )),
+                  errorBuilder: (context, url, StackTrace? error) {
+                    return Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF6F35A5),
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: Colors.black, width: 1),
+                        image: DecorationImage(
+                            image: AssetImage('images/profile.jpg'),
+                            fit: BoxFit.cover),
+                      ),
+                    );
+                  },
                 ),
               ),
               SizedBox(
@@ -250,7 +291,7 @@ class _StoriesState extends State<Stories> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Tittle(text: "Văn Liệu", size: 18, color: Colors.black),
+                  Tittle(text: widget.username, size: 18, color: Colors.black),
                   Row(
                     children: [typePostRow[widget.type], Text(time + " Ago")],
                   )
