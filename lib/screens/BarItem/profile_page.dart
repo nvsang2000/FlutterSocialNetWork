@@ -52,6 +52,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
       list = postProvider.getPostUserList;
     }
+    if(_user!=null){
+      print(_user!.avatarImage!);
+    }
     return Scaffold(
         body: SafeArea(
       top: !widget.isBool,
@@ -86,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               height: 10,
                             ),
                             Text(
-                              user.username!,
+                              _user!.username!,
                               style: TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold),
                             ),
@@ -94,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               height: 20,
                             ),
                             Text(
-                              user.about!,
+                              _user!.about!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 15,

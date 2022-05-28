@@ -78,18 +78,16 @@ class _TopWidgetState extends State<TopWidget> {
                   color: Colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(80)),
                   border: Border.all(width: 5, color: Colors.white)),
-              child: user!.avatarImage != null
-                  ? AvartaImageWidget(
-                      urlImage: widget.avatar,
-                      avartaHeight: widget.avartaHeight,
-                      onTap: () {
-                        imageDialog(context, pickImage);
-                        setState(() {
-                          typeImage = false;
-                        });
-                      },
-                    )
-                  : CircularProgressIndicator()),
+              child: AvartaImageWidget(
+                urlImage: widget.avatar,
+                avartaHeight: widget.avartaHeight,
+                onTap: () {
+                  imageDialog(context, pickImage);
+                  setState(() {
+                    typeImage = false;
+                  });
+                },
+              )),
         ),
       ],
     );
