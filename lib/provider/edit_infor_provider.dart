@@ -12,7 +12,7 @@ class EditInforProvider extends ChangeNotifier {
     if (response.statusCode == 200) {
       User authUser = User.fromJson(json.decode(response.body), token);
       UserPreference().saveUser(authUser);
-
+      notifyListeners();
       return authUser;
     } else {
       throw Exception('Failed to load.');

@@ -12,8 +12,8 @@ import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_gender_w
 import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_text_widget.dart';
 
 class Information extends StatefulWidget {
-  const Information({Key? key}) : super(key: key);
-
+  const Information({Key? key, required this.isBool}) : super(key: key);
+  final bool isBool;
   @override
   State<Information> createState() => _InformationState();
 }
@@ -45,11 +45,11 @@ class _InformationState extends State<Information> {
       resizeToAvoidBottomInset: false,
       body: Column(children: [
         AppBarWidget(
-            name: "Information",
-            onTap: () {
-              Navigator.pop(context);
-            },
-            ),
+          name: "Information",
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
         RefreshIndicator(
           onRefresh: () async {
             User user = await Provider.of<UserProvider>(context).user;
@@ -103,13 +103,13 @@ class _InformationState extends State<Information> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Tittle(text: tittle, size: 18, color: Colors.black),
-              TextButton(
+              widget.isBool?TextButton(
                 onPressed: onTap,
                 child: Text("Edit"),
                 style: ButtonStyle(
                     overlayColor: MaterialStateColor.resolveWith(
                         (states) => Colors.transparent)),
-              )
+              ):Container()
             ],
           ),
           Row(

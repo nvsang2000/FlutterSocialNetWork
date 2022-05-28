@@ -4,8 +4,9 @@ class CoverImageFriendWidget extends StatefulWidget {
   const CoverImageFriendWidget({
     Key? key,
     required this.coverHeight,
+    required this.urlImage,
   }) : super(key: key);
-
+  final String urlImage;
   final double coverHeight;
 
   @override
@@ -16,19 +17,41 @@ class _CoverImageFriendWidgetState extends State<CoverImageFriendWidget> {
   bool isFriend = false;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topRight,
-      height: widget.coverHeight,
-      width: double.infinity,
-      decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("images/profile.jpg"),
-            fit: BoxFit.cover,
+    return Stack(
+      children: [
+        Container(
+          alignment: Alignment.topRight,
+          height: widget.coverHeight,
+          width: double.infinity,
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30)),
+            child: Image.network(
+              widget.urlImage,
+              height: widget.coverHeight,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) =>
+                  loadingProgress == null
+                      ? child
+                      : Container(
+                          height: widget.coverHeight,
+                          width: double.infinity,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          )),
+              errorBuilder: (context, url, StackTrace? error) {
+                return Image.asset(
+                  "images/background.png",
+                  fit: BoxFit.cover,
+                );
+              },
+            ),
           ),
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30))),
-      child: button(),
+        ),
+        button()
+      ],
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class MenuWidget extends StatelessWidget {
   const MenuWidget({
@@ -15,8 +16,14 @@ class MenuWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width / 4,
+      margin: EdgeInsets.symmetric(horizontal: 2),
+      height: 60,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [BoxShadow(color: Color.fromARGB(255, 236, 236, 236))]),
+      width: width / 4 - 4,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             '$index',

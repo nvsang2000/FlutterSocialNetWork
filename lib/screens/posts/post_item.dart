@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:like_button/like_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/api/api_url.dart';
 import 'package:test/item/tittle/tittle.dart';
+import 'package:test/provider/post_provider.dart';
+import 'package:test/screens/BarItem/profile_page.dart';
 import 'package:test/screens/posts/comment/comment_screen.dart';
 import 'package:test/screens/posts/type_post.dart';
 import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
@@ -9,6 +15,7 @@ import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 class Stories extends StatefulWidget {
   const Stories(
       {Key? key,
+      required this.id,
       required this.content,
       required this.image,
       required this.type,
@@ -19,9 +26,10 @@ class Stories extends StatefulWidget {
       required this.userID,
       required this.token})
       : super(key: key);
+  final String id;
   final String content;
   final List<dynamic> image;
-  final int type;
+  final String type;
   final String username;
   final List<dynamic> like;
   final String avatar;
@@ -33,11 +41,16 @@ class Stories extends StatefulWidget {
 }
 
 class _StoriesState extends State<Stories> {
+  PostProvider? postProvider;
+  bool _isLike = false;
   bool isLike = false;
   late String shortText;
   late String longText;
   bool isText = false;
-  int likeCount = 10;
+  bool isLoad = false;
+  bool isMyPost = false;
+  String? _iduser;
+  int likeCount = 0;
   String time =
       DateTime.now().hour.toString() + ":" + DateTime.now().minute.toString();
   var typePostRow = [
@@ -55,6 +68,8 @@ class _StoriesState extends State<Stories> {
   @override
   void initState() {
     super.initState();
+    getId();
+
     if (widget.content.length > 200) {
       shortText = widget.content.substring(0, 200);
       longText = widget.content.substring(200, widget.content.length);
@@ -66,23 +81,72 @@ class _StoriesState extends State<Stories> {
 
   @override
   Widget build(BuildContext context) {
+    if (_iduser != null) {
+      checkLike();
+      if (_iduser == widget.userID) {
+        setState(() {
+          isMyPost = true;
+        });
+      }
+    }
+
     return GestureDetector(
       child: Container(
-        margin: EdgeInsets.only(bottom: 15),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.white,
-        ),
-        child: Column(
-          children: [
-            inforUser(),
-            textContent(),
-            imageContent(context),
-          ],
-        ),
-      ),
+          margin: EdgeInsets.only(bottom: 15),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.white,
+          ),
+          child: isLoad
+              ? Column(
+                  children: [
+                    inforUser(),
+                    textContent(),
+                    imageContent(context),
+                  ],
+                )
+              : Container(
+                  height: 50,
+                  width: 50,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ))),
     );
+  }
+
+  Future<bool> checkLike() async {
+    for (Map i in widget.like) {
+      int _likeCount = 0;
+      if (i['userid'] == _iduser) {
+        if (i['liked'] == 1) {
+          _likeCount++;
+          setState(() {
+            likeCount = _likeCount;
+            isLike = true;
+          });
+        } else {
+          setState(() {
+            likeCount = _likeCount;
+            isLike = false;
+          });
+        }
+      }
+    }
+
+    setState(() {
+      _isLike = isLike;
+      isLoad = true;
+    });
+    return isLike;
+  }
+
+  Future<void> getId() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String? id = pref.getString('_id');
+    setState(() {
+      _iduser = id;
+    });
   }
 
   Stack imageContent(BuildContext context) {
@@ -94,7 +158,7 @@ class _StoriesState extends State<Stories> {
               ? ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                   child: Image.network(
-                    ApiUrl.imageUrl+widget.image[0],
+                    widget.image[0],
                     fit: BoxFit.cover,
                     errorBuilder: (context, url, StackTrace? error) {
                       return ClipRRect(
@@ -139,6 +203,25 @@ class _StoriesState extends State<Stories> {
     );
   }
 
+  Future<bool> onLikeButtonTapped(bool isLiked) async {
+    Map<String, dynamic>? body;
+    if (isLiked)
+      body = {'statusLike': '0'};
+    else
+      body = {'statusLike': '1'};
+
+    Response response = await put(Uri.parse(ApiUrl.likePost + widget.id),
+        body: body, headers: {'Authorization': 'Bearer ' + widget.token});
+
+    if (response.statusCode == 200) {
+      var responseData = jsonDecode(response.body);
+      print(responseData['message']);
+
+      return !isLiked;
+    } else
+      throw Exception('Failed to load.');
+  }
+
   Row Interactive() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,21 +230,24 @@ class _StoriesState extends State<Stories> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             LikeButton(
+              onTap: (isLiked) {
+                return onLikeButtonTapped(isLiked);
+              },
               padding: EdgeInsets.only(left: 20),
-              isLiked: isLike,
+              isLiked: _isLike,
               likeCount: likeCount,
-              likeBuilder: (isLike) {
-                final color = isLike ? Colors.red : Colors.grey;
-                final icon = isLike ? Icons.favorite : Icons.favorite_outline;
+              likeBuilder: (isLiked) {
+                final color = isLiked ? Colors.red : Colors.grey;
+                final icon = isLiked ? Icons.favorite : Icons.favorite_outline;
                 return Icon(
                   icon,
                   color: color,
                 );
               },
-              countBuilder: (count, isLike, text) {
-                final color = isLike ? Colors.black : Colors.grey;
+              countBuilder: (count, isLiked, text) {
+                final color = isLiked ? Colors.black : Colors.grey;
                 return Text(
-                  text,
+                  '$likeCount',
                   style: TextStyle(
                       fontSize: 16, color: color, fontWeight: FontWeight.bold),
                 );
@@ -191,7 +277,7 @@ class _StoriesState extends State<Stories> {
                     width: 10,
                   ),
                   Text(
-                    likeCount.toString(),
+                    '${widget.like.length}',
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
@@ -203,7 +289,9 @@ class _StoriesState extends State<Stories> {
           ],
         ),
         IconButton(
-            onPressed: () {},
+            onPressed: () {
+              onLikeButtonTapped(true);
+            },
             icon: Icon(
               Icons.ios_share,
               color: Colors.grey,
@@ -244,9 +332,12 @@ class _StoriesState extends State<Stories> {
   GestureDetector inforUser() {
     return GestureDetector(
       onTap: () async {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                ProfileFriendPage(userID: widget.userID, token: widget.token)));
+        isMyPost
+            ? Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => ProfilePage(isBool: false,)))
+            : Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ProfileFriendPage(
+                    userID: widget.userID, token: widget.token)));
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -256,7 +347,7 @@ class _StoriesState extends State<Stories> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Image.network(
-                  ApiUrl.imageUrl+widget.avatar,
+                  widget.avatar,
                   height: 50,
                   width: 50,
                   fit: BoxFit.cover,
@@ -292,9 +383,7 @@ class _StoriesState extends State<Stories> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Tittle(text: widget.username, size: 18, color: Colors.black),
-                  Row(
-                    children: [typePostRow[widget.type], Text(time + " Ago")],
-                  )
+                  Text(time + " Ago")
                 ],
               )
             ],

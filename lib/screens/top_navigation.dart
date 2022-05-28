@@ -1,6 +1,8 @@
 // ignore_for_file: type=lint
 import 'package:flutter/material.dart';
+
 import 'package:test/item/tittle/tittle.dart';
+
 import 'package:test/screens/BarItem/home_page.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
 
@@ -16,8 +18,10 @@ class _NavigationBarSCState extends State<NavigationBarSC>
   int selectIndex = 0;
   late final TabController _tabController;
   late final ScrollController _scrollViewController;
+
   void initState() {
     super.initState();
+
     _tabController = TabController(length: 3, vsync: this);
     _scrollViewController = ScrollController();
   }
@@ -80,7 +84,7 @@ class _NavigationBarSCState extends State<NavigationBarSC>
             ];
           },
           body: TabBarView(
-            children: <Widget>[HomePage(), HomePage(), ProfilePage()],
+            children: <Widget>[HomePage(), HomePage(), ProfilePage(isBool: true,)],
             controller: _tabController,
           )),
     );

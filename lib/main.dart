@@ -5,6 +5,7 @@ import 'package:test/models/user.dart';
 import 'package:test/preference/user_peference.dart';
 import 'package:test/provider/auth_provider.dart';
 import 'package:test/provider/edit_infor_provider.dart';
+import 'package:test/provider/friend_provider.dart';
 import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/auth/login_page.dart';
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => EditInforProvider()),
-        ChangeNotifierProvider(create: (_) => PostProvider())
+        ChangeNotifierProvider(create: (_) => PostProvider()),
+        ChangeNotifierProvider(create: (_) => FriendProvider())
       ],
       child: MaterialApp(
           title: 'Flutter Demo',

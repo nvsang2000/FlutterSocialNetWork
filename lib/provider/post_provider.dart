@@ -13,6 +13,7 @@ class PostProvider extends ChangeNotifier {
     var request = MultipartRequest('POST', Uri.parse(ApiUrl.newPostUrl));
 
     request.fields['content'] = content;
+    request.fields['type'] = type;
     // request.fields['type'] = type;
     request.files.add(
       await MultipartFile(
@@ -23,7 +24,9 @@ class PostProvider extends ChangeNotifier {
       'Content-Type': 'multipart/form-data',
       'Authorization': 'Bearer ' + token
     });
+
     var response = await request.send();
+    print(response.statusCode);
     if (response.statusCode == 200) {
       print("upload ok");
     } else {
@@ -33,7 +36,7 @@ class PostProvider extends ChangeNotifier {
   }
 
   List<Post> listPost = [];
-  Future<List<Post>> getAllPost(String token) async {
+  Future<List<Post>> getAllPost() async {
     List<Post> listNewPost = [];
     Response response = await get(
       Uri.parse(ApiUrl.getAllPostUrl),
@@ -43,6 +46,7 @@ class PostProvider extends ChangeNotifier {
       var responseData = jsonDecode(response.body);
       for (Map i in responseData['posts']) {
         Post post = await Post(
+            id: i['_id'],
             userID: i['ownerid']['_id'],
             like: i['like'],
             content: i['content'],
@@ -55,7 +59,7 @@ class PostProvider extends ChangeNotifier {
         listPost = listNewPost;
       }
 
-      // notifyListeners();
+      notifyListeners();
       return listPost;
     } else {
       throw Exception('Failed to load.');
@@ -64,6 +68,53 @@ class PostProvider extends ChangeNotifier {
 
   get getAllList {
     return listPost;
+  }
+  List<Post> listPostUser = [];
+  Future<List<Post>> getAllPostUser(String token) async {
+    List<Post> listNewPostUser = [];
+    Response response = await get(
+      Uri.parse(ApiUrl.getPostUserUrl),headers: {'Authorization':'Bearer '+token}
+    );
+
+    if (response.statusCode == 200) {
+      var responseData = jsonDecode(response.body);
+      for (Map i in responseData['posts']) {
+        Post post = await Post(
+            id: i['_id'],
+            userID: i['ownerid']['_id'],
+            like: i['like'],
+            content: i['content'],
+            images: i['images'],
+            type: i['type'],
+            avatar: i['ownerid']['avatar'],
+            createdAt: i['createdAt'],
+            username: i['ownerid']['username']);
+        listNewPostUser.add(post);
+        listPostUser = listNewPostUser;
+      }
+
+      notifyListeners();
+      return listPostUser;
+    } else {
+      throw Exception('Failed to load.');
+    }
+  }
+
+  get getPostUserList {
+    return listPostUser;
+  }
+
+  Future<void> likePost(String token, String id) async {
+    Map<String, dynamic> body = {'statusLike': '1'};
+
+    Response response = await put(Uri.parse(ApiUrl.likePost + id),
+        body: body, headers: {'Authorization': 'Bearer ' + token});
+    print(response.bodyBytes);
+    if (response.statusCode == 200) {
+      var responseData = jsonDecode(response.body);
+      print(responseData['message']);
+    } else
+      throw Exception('Failed to load.');
   }
 
   notify() {

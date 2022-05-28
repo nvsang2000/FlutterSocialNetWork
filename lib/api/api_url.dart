@@ -10,4 +10,6 @@ class ApiUrl {
       'https://yue-backend-netword.herokuapp.com/uploads/avatars/';
   static const String newPostUrl = url + 'user/new-post';
   static const String getAllPostUrl = url + 'all-post/';
+  static const String getPostUserUrl = url + 'user/get-post/';
+  static const String likePost = url + 'user/like-post/';
 }
