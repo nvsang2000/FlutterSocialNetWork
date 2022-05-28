@@ -14,6 +14,9 @@ class FriendProvider extends ChangeNotifier {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       userFriend = UserFriend(
+          followers: List<String>.from(responseData['data']['followers']),
+          following: List<String>.from(responseData['data']['following']),
+          id: responseData['data']['_id'],
           about: responseData['data']['about'],
           address: responseData['data']['address'],
           avartaImage: responseData['data']['avatar'],
@@ -31,5 +34,24 @@ class FriendProvider extends ChangeNotifier {
 
   get friendInfo {
     return userFriend;
+  }
+
+  Future<void> follow(String token, String id, bool isFollow) async {
+    var url;
+    if (isFollow)
+      url = ApiUrl.unfollowUrl;
+    else
+      url = ApiUrl.followUrl;
+
+    Response response = await post(Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: json.encode({'userId': id}));
+    if (response.statusCode == 200) {
+      print("Ok");
+    } else
+      ("Not ok");
   }
 }

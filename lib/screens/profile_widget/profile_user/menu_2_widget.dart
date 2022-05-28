@@ -32,23 +32,26 @@ class Menu2Widget extends StatelessWidget {
                 border: Border.all(color: Colors.grey, width: 1)),
           ),
         ),
-        isBool?Container(
-          width: 35,
-          height: 35,
-          child: IconButton(
-              padding: EdgeInsets.zero,
-              alignment: Alignment.center,
-              splashColor: Colors.transparent,
-              onPressed: () {
-                UserPreference().removeUser();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
-              },
-              icon: Icon(Icons.settings_outlined)),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Colors.grey, width: 1)),
-        ):Container()
+        isBool
+            ? Container(
+                width: 35,
+                height: 35,
+                child: IconButton(
+                    padding: EdgeInsets.zero,
+                    alignment: Alignment.center,
+                    splashColor: Colors.transparent,
+                    onPressed: () {
+                      UserPreference().removeUser();
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    icon: Icon(Icons.logout_outlined)),
+                decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 212, 36, 23),
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    border: Border.all(color: Colors.grey, width: 1)),
+              )
+            : Container()
       ],
     );
   }

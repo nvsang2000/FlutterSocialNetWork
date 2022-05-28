@@ -2,12 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/friend.dart';
+import 'package:test/models/post.dart';
 import 'package:test/provider/friend_provider.dart';
+import 'package:test/provider/post_provider.dart';
+import 'package:test/screens/posts/post_item.dart';
+import 'package:test/screens/profile_widget/friend/information_user.dart';
 
 import 'package:test/screens/profile_widget/friend/top_friend_widged.dart';
 import 'package:test/screens/profile_widget/menu_widget.dart';
-import 'package:test/screens/profile_widget/my_profile/information_user.dart';
+import 'package:test/screens/profile_widget/profile_user/information_user.dart';
 import 'package:test/screens/profile_widget/profile_user/menu_2_widget.dart';
 
 class ProfileFriendPage extends StatefulWidget {
@@ -23,13 +29,25 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
   double coverHeight = 200;
   double avartaHeight = 120;
   UserFriend? userFriend;
+  String? token;
+  List<Post> list = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getToken();
+  }
+
   @override
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
     FriendProvider friendProvider = Provider.of<FriendProvider>(context);
     friendProvider.getUser(widget.token, widget.userID);
     userFriend = friendProvider.friendInfo;
+    PostProvider postProvider = Provider.of<PostProvider>(context);
+    postProvider.getAllPostForUser(widget.userID);
 
+    list = postProvider.getAllListForUser;
     var icon = [
       Icons.person_pin,
       Icons.edit,
@@ -48,14 +66,17 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
         userFriend!.gender.toString()
       ];
     }
+
     return Scaffold(
         body: Container(
-      child: userFriend != null
+      child: userFriend != null && token != null
           ? ListView(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
                 TopFriendWidget(
+                    token: token!,
+                    iduser: userFriend!.id!,
                     coverHeight: coverHeight,
                     avartaHeight: avartaHeight,
                     avatarUrl: userFriend!.avartaImage!,
@@ -93,9 +114,17 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
                           MenuWidget(
                               menu: "Photos", index: 100, width: menuWidth),
                           MenuWidget(
-                              menu: "Followers", index: 100, width: menuWidth),
+                              menu: "Followers",
+                              index: userFriend != null
+                                  ? userFriend!.followers!.length
+                                  : 999,
+                              width: menuWidth),
                           MenuWidget(
-                              menu: "Following", index: 100, width: menuWidth),
+                              menu: "Following",
+                              index: userFriend != null
+                                  ? userFriend!.following!.length
+                                  : 999,
+                              width: menuWidth),
                         ],
                         mainAxisAlignment: MainAxisAlignment.center,
                       ),
@@ -107,14 +136,42 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
                         isBool: false,
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Information(
-                                    isBool: false,
+                              builder: (context) => InformationFriend(
+                                    userFriend: userFriend!,
                                   )));
                         },
-                      )
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      list.length != 0
+                          ? Align(
+                              child: Tittle(
+                                  text: "Posts", size: 24, color: Colors.black),
+                              alignment: Alignment.topLeft,
+                            )
+                          : Container()
                     ],
                   ),
-                )
+                ),
+                widget.token != null && list.length != 0
+                    ? ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) => Stories(
+                            id: list[index].id,
+                            token: widget.token,
+                            userID: list[index].userID,
+                            content: list[index].content,
+                            image: list[index].images,
+                            type: list[index].type,
+                            avatar: list[index].avatar,
+                            like: list[index].like,
+                            createdAt: list[index].createdAt,
+                            username: list[index].username),
+                        itemCount: list.length,
+                      )
+                    : Container(),
               ],
             )
           : Container(
@@ -124,5 +181,13 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
                 child: CircularProgressIndicator(),
               )),
     ));
+  }
+
+  Future<void> getToken() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String? _token = await pref.getString('token');
+    setState(() {
+      token = _token;
+    });
   }
 }

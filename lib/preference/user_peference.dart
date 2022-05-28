@@ -9,7 +9,12 @@ class UserPreference {
     if (user.username != null) {
       pref.setString('username', user.username!);
     }
-
+    if (user.followers != null) {
+      pref.setStringList('followers', user.followers!);
+    }
+    if (user.following != null) {
+      pref.setStringList('following', user.following!);
+    }
     // pref.setInt('gender', user.gender!);
     if (user.iduser != null) {
       pref.setString('_id', user.iduser!);
@@ -42,6 +47,8 @@ class UserPreference {
     int? gender = pref.getInt('gender');
     String? token = pref.getString("token");
     String? iduser = pref.getString("_id");
+    List<String>? following = pref.getStringList("following");
+    List<String>? followers = pref.getStringList("followers");
     String? about = pref.getString("about");
     String? address = pref.getString("address");
     String? birthday = pref.getString("birthday");
@@ -50,6 +57,8 @@ class UserPreference {
     return User(
         // gender: gender,
         username: username,
+        followers: followers,
+        following: following,
         gender: gender,
         iduser: iduser,
         about: about,
@@ -78,13 +87,14 @@ class UserPreference {
   Future<String?> getToken() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     final String? token = await pref.getString('token');
-
+    print("ss" + token!);
     return token;
   }
 
   Future<String?> getId() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     String? id = pref.getString('_id');
+    print(id);
     return id;
   }
 }

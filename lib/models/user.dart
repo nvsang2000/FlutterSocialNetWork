@@ -5,12 +5,16 @@ class User {
   String? about;
   String? address;
   String? birthday;
+  List<String>? following;
+  List<String>? followers;
   int? gender;
   String? coverImage;
   String? avatarImage;
 
   User(
       {this.username,
+      this.followers,
+      this.following,
       this.token,
       this.iduser,
       this.about,
@@ -22,6 +26,8 @@ class User {
   factory User.fromJson(Map<String, dynamic> responseData, String token) {
     return User(
       username: responseData['data']['username'],
+      followers: List<String>.from(responseData['data']['followers']) ,
+      following:  List<String>.from(responseData['data']['following'] ),
       token: responseData['token'],
       gender: responseData['data']['gender'],
       iduser: responseData['data']['_id'],
