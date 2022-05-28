@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/models/post.dart';
+import 'package:test/models/user.dart';
 import 'package:test/provider/post_provider.dart';
+import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/posts/new_post.dart';
 import 'package:test/screens/posts/post_item.dart';
 
@@ -28,9 +30,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    PostProvider postProvider = Provider.of<PostProvider>(context,listen: false);
+    PostProvider postProvider = Provider.of<PostProvider>(context);
     postProvider.getAllPost();
-
     list = postProvider.getAllList;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 240, 240, 240),

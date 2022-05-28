@@ -69,16 +69,53 @@ class PostProvider extends ChangeNotifier {
   get getAllList {
     return listPost;
   }
-  List<Post> listPostUser = [];
-  Future<List<Post>> getAllPostUser(String token) async {
-    List<Post> listNewPostUser = [];
+
+  List<Post> listPostForUser = [];
+  Future<List<Post>> getAllPostForUser(String id) async {
+    List<Post> listNewPostForUser = [];
     Response response = await get(
-      Uri.parse(ApiUrl.getPostUserUrl),headers: {'Authorization':'Bearer '+token}
+      Uri.parse(ApiUrl.getAllPostUrl),
     );
 
     if (response.statusCode == 200) {
       var responseData = jsonDecode(response.body);
       for (Map i in responseData['posts']) {
+        if (i['ownerid']['_id'] != id) continue;
+        Post post = await Post(
+            id: i['_id'],
+            userID: i['ownerid']['_id'],
+            like: i['like'],
+            content: i['content'],
+            images: i['images'],
+            type: i['type'],
+            avatar: i['ownerid']['avatar'],
+            createdAt: i['createdAt'],
+            username: i['ownerid']['username']);
+        listNewPostForUser.add(post);
+        listPostForUser = listNewPostForUser;
+      }
+
+      notifyListeners();
+      return listPostForUser;
+    } else {
+      throw Exception('Failed to load.');
+    }
+  }
+
+  get getAllListForUser {
+    return listPostForUser;
+  }
+
+  List<Post> listPostUser = [];
+  Future<List<Post>> getAllPostUser(String token) async {
+    List<Post> listNewPostUser = [];
+    Response response = await get(Uri.parse(ApiUrl.getPostUserUrl),
+        headers: {'Authorization': 'Bearer ' + token});
+  
+    if (response.statusCode == 200) {
+      var responseData = jsonDecode(response.body);
+      for (Map i in responseData['posts']) {
+        if (i['ownerid'] == null) continue;
         Post post = await Post(
             id: i['_id'],
             userID: i['ownerid']['_id'],

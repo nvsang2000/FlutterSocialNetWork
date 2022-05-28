@@ -15,11 +15,13 @@ class AvartaImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return SizedBox(
       child: Stack(children: [
         ImageWidget(
-            urlImage: urlImage,
-            avartaHeight: avartaHeight,),
+          urlImage: urlImage,
+          avartaHeight: avartaHeight,
+        ),
         ChangeImageButton(
           onTap: onTap,
           bottom: 0,

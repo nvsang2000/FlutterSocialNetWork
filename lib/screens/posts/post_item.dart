@@ -51,8 +51,7 @@ class _StoriesState extends State<Stories> {
   bool isMyPost = false;
   String? _iduser;
   int likeCount = 0;
-  String time =
-      DateTime.now().hour.toString() + ":" + DateTime.now().minute.toString();
+
   var typePostRow = [
     TypePost(
       type: "Friend",
@@ -203,6 +202,33 @@ class _StoriesState extends State<Stories> {
     );
   }
 
+  String timeago({bool numericDates = true}) {
+    final dateAt = widget.createdAt.substring(0, 10) +
+        ' ' +
+        widget.createdAt.substring(11, 19);
+    DateTime tempDate = DateTime.parse(dateAt);
+    final difference = DateTime.now().difference(tempDate);
+    if ((difference.inDays / 7).floor() >= 1) {
+      return (numericDates) ? '1 week ago' : 'Last week';
+    } else if (difference.inDays >= 2) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays >= 1) {
+      return (numericDates) ? '1 day ago' : 'Yesterday';
+    } else if (difference.inHours >= 2) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inHours >= 1) {
+      return (numericDates) ? '1 hour ago' : 'An hour ago';
+    } else if (difference.inMinutes >= 2) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inMinutes >= 1) {
+      return (numericDates) ? '1 minute ago' : 'A minute ago';
+    } else if (difference.inSeconds >= 3) {
+      return '${difference.inSeconds} seconds ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
   Future<bool> onLikeButtonTapped(bool isLiked) async {
     Map<String, dynamic>? body;
     if (isLiked)
@@ -333,8 +359,10 @@ class _StoriesState extends State<Stories> {
     return GestureDetector(
       onTap: () async {
         isMyPost
-            ? Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => ProfilePage(isBool: false,)))
+            ? Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ProfilePage(
+                      isBool: false,
+                    )))
             : Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => ProfileFriendPage(
                     userID: widget.userID, token: widget.token)));
@@ -383,7 +411,7 @@ class _StoriesState extends State<Stories> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Tittle(text: widget.username, size: 18, color: Colors.black),
-                  Text(time + " Ago")
+                  Text(timeago())
                 ],
               )
             ],

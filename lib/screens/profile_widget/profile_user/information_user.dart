@@ -7,13 +7,15 @@ import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/edit_infor_provider.dart';
 import 'package:test/provider/user_provider.dart';
-import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_date_widget.dart';
-import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_gender_widget.dart';
-import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_text_widget.dart';
+import 'package:test/screens/profile_widget/profile_user/edit_widget/edit_date_widget.dart';
+import 'package:test/screens/profile_widget/profile_user/edit_widget/edit_gender_widget.dart';
+import 'package:test/screens/profile_widget/profile_user/edit_widget/edit_text_widget.dart';
 
 class Information extends StatefulWidget {
-  const Information({Key? key, required this.isBool}) : super(key: key);
-  final bool isBool;
+  const Information({
+    Key? key,
+  }) : super(key: key);
+
   @override
   State<Information> createState() => _InformationState();
 }
@@ -21,9 +23,8 @@ class Information extends StatefulWidget {
 class _InformationState extends State<Information> {
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
     EditInforProvider edit = Provider.of<EditInforProvider>(context);
-
+    User user = Provider.of<UserProvider>(context).user;
     var icon = [
       Icons.person_pin,
       Icons.edit,
@@ -103,13 +104,13 @@ class _InformationState extends State<Information> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Tittle(text: tittle, size: 18, color: Colors.black),
-              widget.isBool?TextButton(
+              TextButton(
                 onPressed: onTap,
                 child: Text("Edit"),
                 style: ButtonStyle(
                     overlayColor: MaterialStateColor.resolveWith(
                         (states) => Colors.transparent)),
-              ):Container()
+              )
             ],
           ),
           Row(

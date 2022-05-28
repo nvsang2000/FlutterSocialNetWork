@@ -20,7 +20,7 @@ class CoverImageWidget extends StatelessWidget {
         Container(
           alignment: Alignment.topRight,
           height: coverHeight,
-          width: double.infinity,
+          width: double.maxFinite,
           child: ClipRRect(
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
@@ -28,14 +28,14 @@ class CoverImageWidget extends StatelessWidget {
             child: Image.network(
               urlImage,
               height: coverHeight,
-              width: double.infinity,
+              width: double.maxFinite,
               fit: BoxFit.cover,
               loadingBuilder: (context, child, loadingProgress) =>
                   loadingProgress == null
                       ? child
                       : Container(
                           height: coverHeight,
-                          width: double.infinity,
+                          width: double.maxFinite,
                           child: Center(
                             child: CircularProgressIndicator(),
                           )),

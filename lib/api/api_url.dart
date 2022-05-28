@@ -12,4 +12,7 @@ class ApiUrl {
   static const String getAllPostUrl = url + 'all-post/';
   static const String getPostUserUrl = url + 'user/get-post/';
   static const String likePost = url + 'user/like-post/';
+  static const String getAllUser = url + 'all-user';
+  static const String followUrl = url + 'user/follow/';
+  static const String unfollowUrl = url + 'user/un-follow/';
 }

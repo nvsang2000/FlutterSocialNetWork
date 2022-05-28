@@ -5,6 +5,7 @@ import 'package:test/item/tittle/tittle.dart';
 
 import 'package:test/screens/BarItem/home_page.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
+import 'package:test/screens/BarItem/search_page.dart';
 
 class NavigationBarSC extends StatefulWidget {
   const NavigationBarSC({Key? key}) : super(key: key);
@@ -50,7 +51,8 @@ class _NavigationBarSCState extends State<NavigationBarSC>
                   title: Tittle(
                       text: "SocialNetwork", size: 25, color: Colors.white),
                   actions: [
-                    IconButton(onPressed: () {}, icon: Icon(Icons.search))
+                    IconButton(
+                        onPressed: () {}, icon: Icon(Icons.notifications_none))
                   ],
                   pinned: true,
                   floating: true,
@@ -71,7 +73,7 @@ class _NavigationBarSCState extends State<NavigationBarSC>
                         icon: Icon(Icons.home),
                       ),
                       Tab(
-                        icon: Icon(Icons.notifications_none),
+                        icon: Icon(Icons.search),
                       ),
                       Tab(
                         icon: Icon(Icons.menu),
@@ -84,7 +86,13 @@ class _NavigationBarSCState extends State<NavigationBarSC>
             ];
           },
           body: TabBarView(
-            children: <Widget>[HomePage(), HomePage(), ProfilePage(isBool: true,)],
+            children: <Widget>[
+              HomePage(),
+              SearchPage(),
+              ProfilePage(
+                isBool: true,
+              )
+            ],
             controller: _tabController,
           )),
     );

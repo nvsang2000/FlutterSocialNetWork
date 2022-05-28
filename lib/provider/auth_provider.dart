@@ -74,7 +74,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   Future<Map<String, dynamic>> login(String username, String password) async {
     var result;
     final Map<String, dynamic> loginData = {
@@ -90,7 +89,7 @@ class AuthProvider extends ChangeNotifier {
         });
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
-      print(responseData);
+
       if (responseData['success']) {
         User authUser = User.fromJson(responseData, responseData['token']);
 
@@ -135,13 +134,4 @@ class AuthProvider extends ChangeNotifier {
     }
     return result;
   }
-
-  // static onError(error) {
-  //   print('the error is ${error.detail}');
-  //   return {
-  //     'status': false,
-  //     'message': 'UnSuccessfully Request',
-  //     'data': error
-  //   };
-  // }
 }
