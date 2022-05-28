@@ -1,14 +1,16 @@
 class Post {
   String content;
   List<dynamic> images;
-  int type;
+  String type;
   String username;
   String avatar;
   String createdAt;
   List<dynamic> like;
   String userID;
+  String id;
   Post(
       {required this.content,
+      required this.id,
       required this.userID,
       required this.images,
       required this.type,

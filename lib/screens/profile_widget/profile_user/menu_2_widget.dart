@@ -3,14 +3,15 @@ import 'package:test/preference/user_peference.dart';
 import 'package:test/screens/auth/login_page.dart';
 
 class Menu2Widget extends StatelessWidget {
-  const Menu2Widget({
-    Key? key,
-    required this.onTap,
-    required this.menuWidth,
-  }) : super(key: key);
+  const Menu2Widget(
+      {Key? key,
+      required this.onTap,
+      required this.menuWidth,
+      required this.isBool})
+      : super(key: key);
   final VoidCallback onTap;
   final double menuWidth;
-
+  final bool isBool;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -20,7 +21,7 @@ class Menu2Widget extends StatelessWidget {
           onTap: onTap,
           child: Container(
             alignment: Alignment.center,
-            width: menuWidth * 0.8,
+            width: menuWidth,
             height: 35,
             child: Text(
               "MY PROFILE",
@@ -31,7 +32,7 @@ class Menu2Widget extends StatelessWidget {
                 border: Border.all(color: Colors.grey, width: 1)),
           ),
         ),
-        Container(
+        isBool?Container(
           width: 35,
           height: 35,
           child: IconButton(
@@ -47,7 +48,7 @@ class Menu2Widget extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Colors.grey, width: 1)),
-        )
+        ):Container()
       ],
     );
   }

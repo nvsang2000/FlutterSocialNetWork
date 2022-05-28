@@ -1,5 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/models/post.dart';
@@ -16,7 +17,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Post> list = [];
+
   String? token;
+
   @override
   void initState() {
     super.initState();
@@ -25,10 +28,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    PostProvider postProvider = Provider.of<PostProvider>(context);
-    postProvider.getAllPost;
+    PostProvider postProvider = Provider.of<PostProvider>(context,listen: false);
+    postProvider.getAllPost();
+
     list = postProvider.getAllList;
-    print(list.length);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 240, 240, 240),
       resizeToAvoidBottomInset: true,
@@ -61,52 +64,23 @@ class _HomePageState extends State<HomePage> {
                     itemExtent: 100),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                      (context, index) => token != null
-                          ? FutureBuilder(
-                              future: postProvider.getAllPost(token!),
-                              builder: (context,
-                                      AsyncSnapshot<List<Post>> snapshot) =>
-                                  snapshot.data != null
-                                      ? ListView.builder(
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, index) =>
-                                              Stories(
-                                                  token: token!,
-                                                  userID: snapshot
-                                                      .data![index].userID,
-                                                  content: snapshot
-                                                      .data![index].content,
-                                                  image: snapshot
-                                                      .data![index].images,
-                                                  type: snapshot
-                                                      .data![index].type,
-                                                  avatar: snapshot
-                                                      .data![index].avatar,
-                                                  like: snapshot
-                                                      .data![index].like,
-                                                  createdAt: snapshot
-                                                      .data![index].createdAt,
-                                                  username: snapshot
-                                                      .data![index].username),
-                                          itemCount: snapshot.data!.length,
-                                        )
-                                      : Container(
-                                          margin: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.3),
-                                          child: Center(
-                                            child: SizedBox(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                              height: 50,
-                                              width: 50,
-                                            ),
-                                          ),
-                                        ))
+                      (context, index) => token != null && list.length != 0
+                          ? ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) => Stories(
+                                  id: list[index].id,
+                                  token: token!,
+                                  userID: list[index].userID,
+                                  content: list[index].content,
+                                  image: list[index].images,
+                                  type: list[index].type,
+                                  avatar: list[index].avatar,
+                                  like: list[index].like,
+                                  createdAt: list[index].createdAt,
+                                  username: list[index].username),
+                              itemCount: list.length,
+                            )
                           : Container(
                               margin: EdgeInsets.only(
                                   top:

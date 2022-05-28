@@ -19,8 +19,9 @@ class TopWidget extends StatefulWidget {
     Key? key,
     required this.coverHeight,
     required this.avartaHeight,
+    required this.isBool,
   }) : super(key: key);
-
+  final bool isBool;
   final double coverHeight;
   final double avartaHeight;
 
@@ -55,7 +56,8 @@ class _TopWidgetState extends State<TopWidget> {
       children: [
         Container(
           child: CoverImageWidget(
-              urlImage: ApiUrl.imageUrl + user!.coverImage!,
+              isBool: widget.isBool,
+              urlImage: user!.coverImage!,
               coverHeight: widget.coverHeight,
               onTap: () {
                 imageDialog(context, pickImage);
@@ -74,7 +76,7 @@ class _TopWidgetState extends State<TopWidget> {
                   border: Border.all(width: 5, color: Colors.white)),
               child: user!.avatarImage != null
                   ? AvartaImageWidget(
-                      urlImage: ApiUrl.imageUrl + user!.avatarImage!,
+                      urlImage: user!.avatarImage!,
                       avartaHeight: widget.avartaHeight,
                       onTap: () {
                         imageDialog(context, pickImage);
@@ -196,6 +198,7 @@ class _TopWidgetState extends State<TopWidget> {
       'Authorization': 'Bearer ' + token!
     });
     var response = await request.send();
+    print(response.statusCode);
     if (response.statusCode == 200) {
       User _user = await edit!.getUser(token!, user!.iduser!);
       _setuser!.setUser(_user);
