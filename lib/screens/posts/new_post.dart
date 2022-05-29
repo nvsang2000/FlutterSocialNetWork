@@ -29,6 +29,7 @@ class _NewPostState extends State<NewPost> {
   File? file;
   Post? post;
   PostProvider? _post;
+  String? _iduser;
   TextEditingController controller = TextEditingController();
   // bool isImage = false;
   int typePostInt = 0;
@@ -51,7 +52,8 @@ class _NewPostState extends State<NewPost> {
 
   @override
   void initState() {
-    getToken();
+    // getToken();
+    // getId();
     super.initState();
   }
 
@@ -62,19 +64,18 @@ class _NewPostState extends State<NewPost> {
 
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Column(children: [
-          appBar(),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Column(children: [
-              inforUser(),
-              contentPost(context),
-              chooseImage(context)
-            ]),
-          )
-        ]),
-      ),
+          resizeToAvoidBottomInset: false,
+          body: Column(children: [
+            appBar(),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Column(children: [
+                inforUser(),
+                contentPost(context),
+                chooseImage(context)
+              ]),
+            )
+          ])),
     );
   }
 
@@ -108,8 +109,9 @@ class _NewPostState extends State<NewPost> {
                         setState(() {
                           postBool = true;
                         });
-                        await _post!.newPost(token!, controller.text,
+                        await _post!.newPost(_user!.token!, controller.text,
                             typePostInt.toString(), file!);
+                        controller.clear();
                         Navigator.pop(context);
                       } else
                         errorDialog(context,
@@ -345,13 +347,21 @@ class _NewPostState extends State<NewPost> {
         ));
   }
 
-  Future<String?> getToken() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? _token = await pref.getString('token');
-    setState(() {
-      token = _token;
-    });
-    // print(token);
-    return "Ok";
-  }
+  // Future<String?> getToken() async {
+  //   final SharedPreferences pref = await SharedPreferences.getInstance();
+  //   String? _token = await pref.getString('token');
+  //   setState(() {
+  //     token = _token;
+  //   });
+  //   // print(token);
+  //   return "Ok";
+  // }
+
+  // Future<void> getId() async {
+  //   final SharedPreferences pref = await SharedPreferences.getInstance();
+  //   String? id = pref.getString('_id');
+  //   setState(() {
+  //     _iduser = id;
+  //   });
+  // }
 }

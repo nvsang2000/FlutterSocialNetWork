@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:test/api/api_url.dart';
@@ -47,6 +46,34 @@ class UserProvider extends ChangeNotifier {
     return listUser;
   }
 
+  List<Users> listUserForUser = [];
+  Future<List<Users>> getAllUserForUser() async {
+    List<Users> listNewUserForUser = [];
+    Response response = await get(Uri.parse(ApiUrl.getAllUser));
+    if (response.statusCode == 200) {
+      var responseData = jsonDecode(response.body);
+      for (Map i in responseData['data']) {
+        for (String p in i['followers']) {
+          if (p != _user.iduser) continue;
+          Users user = await Users(
+              avatarImage: i['avatar'],
+              iduser: i['_id'],
+              username: i['username']);
+          listNewUserForUser.add(user);
+        }
+        listUserForUser = listNewUserForUser;
+      }
+      notifyListeners();
+      return listUserForUser;
+    } else {
+      throw Exception('Failed to load.');
+    }
+  }
+
+  get getAllUserForUserList {
+    return listUserForUser;
+  }
+
   User? userF;
   Future<User> getUser(String token, String id) async {
     Response response = await get(Uri.parse(ApiUrl.profileUrl + id),
@@ -77,5 +104,22 @@ class UserProvider extends ChangeNotifier {
 
   get friendInfo {
     return userF;
+  }
+
+  int indexImage = 0;
+  Future<void> getTotalImage() async {
+    Response response = await get(Uri.parse(ApiUrl.getTotalImage),
+        headers: {'Authorization': 'Bearer ' + _user.token!});
+
+    if (response.statusCode == 200) {
+      List<dynamic> responseData = json.decode(response.body)['urls'];
+      indexImage = responseData.length;
+    } else {
+      print(response.statusCode);
+    }
+  }
+
+  get totalImage {
+    return indexImage;
   }
 }

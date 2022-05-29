@@ -30,26 +30,28 @@ class CoverImageFriendWidget extends StatefulWidget {
 
 class _CoverImageFriendWidgetState extends State<CoverImageFriendWidget> {
   bool isFriend = false;
-  bool _isFriend = false;
   bool isLoad = false;
   String? _iduser;
   User? _user;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
     getId();
   }
 
   @override
   Widget build(BuildContext context) {
-    UserProvider user = Provider.of<UserProvider>(context);
+    UserProvider user = Provider.of<UserProvider>(
+      context,
+    );
     if (_iduser != null) {
       user.getUser(widget.token, _iduser!);
       _user = user.friendInfo;
     }
-
     checkFollow();
+
     return Stack(
       children: [
         Container(
@@ -96,36 +98,29 @@ class _CoverImageFriendWidgetState extends State<CoverImageFriendWidget> {
     });
   }
 
-  Future<bool> checkFollow() async {
+  Future<void> checkFollow() async {
+    bool? bools;
     if (_user != null) {
       for (String i in _user!.following!) {
         if (i == widget.iduser) {
-          setState(() {
-            isFriend = true;
-          });
+          bools = true;
+          break;
         } else {
-          setState(() {
-            isFriend = false;
-          });
+          bools = false;
         }
-        setState(() {
-          _isFriend = isFriend;
-          isLoad = true;
-        });
       }
+      setState(() {
+        isFriend = bools!;
+      });
     }
-
-    return isFriend;
   }
 
   Future<void> follow(String token, String id, bool _isFollow) async {
     var url;
-   
     if (_isFollow)
       url = ApiUrl.unfollowUrl;
     else
       url = ApiUrl.followUrl;
-    print(DateTime.now());
     Response response = await post(Uri.parse(url),
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -133,7 +128,6 @@ class _CoverImageFriendWidgetState extends State<CoverImageFriendWidget> {
         },
         body: json.encode({'userId': id}));
     if (response.statusCode == 200) {
-      print(DateTime.now());
     } else
       throw Exception('Failed to load.');
   }
@@ -151,21 +145,19 @@ class _CoverImageFriendWidgetState extends State<CoverImageFriendWidget> {
                   Icons.arrow_back_ios,
                   color: Colors.black,
                 )),
-            isLoad
-                ? ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        primary: _isFriend ? Colors.red : Colors.blue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30))),
-                    onPressed: () {
-                      setState(() {
-                        _isFriend = !_isFriend;
-                      });
-                      follow(widget.token, widget.iduser, !_isFriend);
-                    },
-                    child: tittleButton(),
-                  )
-                : CircularProgressIndicator()
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: isFriend ? Colors.red : Colors.blue,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30))),
+              onPressed: () async {
+                follow(widget.token, widget.iduser, isFriend);
+                setState(() {
+                  isFriend = !isFriend;
+                });
+              },
+              child: tittleButton(),
+            )
           ]),
     );
   }
@@ -173,16 +165,16 @@ class _CoverImageFriendWidgetState extends State<CoverImageFriendWidget> {
   Row tittleButton() => Row(
         children: [
           Icon(
-            _isFriend ? Icons.person_remove : Icons.person_add,
-            color: _isFriend ? Colors.black : null,
+            isFriend ? Icons.person_remove : Icons.person_add,
+            color: isFriend ? Colors.black : null,
           ),
           SizedBox(
             width: 5,
           ),
           Text(
-            _isFriend ? "Unfollow" : "Follow",
+            isFriend ? "Unfollow" : "Follow",
             style: TextStyle(
-                color: _isFriend ? Colors.black : null,
+                color: isFriend ? Colors.black : null,
                 fontWeight: FontWeight.bold),
           )
         ],

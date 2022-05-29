@@ -35,8 +35,7 @@ class EditInforProvider extends ChangeNotifier {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json'
         });
-    print(response.statusCode);
-    print(response.headers);
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
 

@@ -19,14 +19,11 @@ class TopWidget extends StatefulWidget {
     Key? key,
     required this.coverHeight,
     required this.avartaHeight,
-    required this.avatar,
-    required this.cover,
     required this.isBool,
   }) : super(key: key);
   final bool isBool;
   final double coverHeight;
-  final String cover;
-  final String avatar;
+
   final double avartaHeight;
 
   @override
@@ -61,7 +58,7 @@ class _TopWidgetState extends State<TopWidget> {
         Container(
           child: CoverImageWidget(
               isBool: widget.isBool,
-              urlImage: widget.cover,
+              urlImage: user!.coverImage!,
               coverHeight: widget.coverHeight,
               onTap: () {
                 imageDialog(context, pickImage);
@@ -79,7 +76,7 @@ class _TopWidgetState extends State<TopWidget> {
                   borderRadius: BorderRadius.all(Radius.circular(80)),
                   border: Border.all(width: 5, color: Colors.white)),
               child: AvartaImageWidget(
-                urlImage: widget.avatar,
+                urlImage: user!.avatarImage!,
                 avartaHeight: widget.avartaHeight,
                 onTap: () {
                   imageDialog(context, pickImage);
@@ -200,10 +197,10 @@ class _TopWidgetState extends State<TopWidget> {
       'Authorization': 'Bearer ' + token!
     });
     var response = await request.send();
-
+    print(response.statusCode);
     if (response.statusCode == 200) {
-      // User _user = await edit!.getUser(token!, user!.iduser!);
-      // _setuser!.setUser(_user);
+      User _user = await edit!.getUser(token!, user!.iduser!);
+      _setuser!.setUser(_user);
       _clear();
       print("upload ok");
     } else {

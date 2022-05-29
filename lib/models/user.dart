@@ -24,11 +24,12 @@ class User {
       this.avatarImage,
       this.coverImage});
   factory User.fromJson(Map<String, dynamic> responseData, String token) {
+    print(token);
     return User(
       username: responseData['data']['username'],
-      followers: List<String>.from(responseData['data']['followers']) ,
-      following:  List<String>.from(responseData['data']['following'] ),
-      token: responseData['token'],
+      followers: List<String>.from(responseData['data']['followers']),
+      following: List<String>.from(responseData['data']['following']),
+      token: token,
       gender: responseData['data']['gender'],
       iduser: responseData['data']['_id'],
       about: responseData['data']['about'],

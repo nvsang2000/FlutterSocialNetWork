@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:test/api/api_url.dart';
 import 'package:test/models/post.dart';
+import 'package:test/models/users.dart';
 
 class PostProvider extends ChangeNotifier {
   Future<StreamedResponse> newPost(
@@ -36,34 +37,39 @@ class PostProvider extends ChangeNotifier {
   }
 
   List<Post> listPost = [];
-  Future<List<Post>> getAllPost() async {
+  Future<List<Post>> getAllPost(List<Users> list, String id) async {
     List<Post> listNewPost = [];
+    List<String> allID = [id];
     Response response = await get(
       Uri.parse(ApiUrl.getAllPostUrl),
     );
-
+    list.forEach((element) {
+      allID.add(element.iduser!);
+    });
     if (response.statusCode == 200) {
       var responseData = jsonDecode(response.body);
       for (Map i in responseData['posts']) {
-        Post post = await Post(
-            id: i['_id'],
-            userID: i['ownerid']['_id'],
-            like: i['like'],
-            content: i['content'],
-            images: i['images'],
-            type: i['type'],
-            avatar: i['ownerid']['avatar'],
-            createdAt: i['createdAt'],
-            username: i['ownerid']['username']);
-        listNewPost.add(post);
-        listPost = listNewPost;
+        for (String p in allID) {
+          if (p != i['ownerid']['_id']) continue;
+          Post post = await Post(
+              id: i['_id'],
+              userID: i['ownerid']['_id'],
+              like: i['like'],
+              content: i['content'],
+              images: i['images'],
+              type: i['type'],
+              avatar: i['ownerid']['avatar'],
+              createdAt: i['createdAt'],
+              username: i['ownerid']['username']);
+          listNewPost.add(post);
+          listPost = listNewPost;
+        }
       }
-
-      notifyListeners();
-      return listPost;
     } else {
       throw Exception('Failed to load.');
     }
+    notifyListeners();
+    return listPost;
   }
 
   get getAllList {
@@ -94,12 +100,11 @@ class PostProvider extends ChangeNotifier {
         listNewPostForUser.add(post);
         listPostForUser = listNewPostForUser;
       }
-
-      notifyListeners();
-      return listPostForUser;
     } else {
       throw Exception('Failed to load.');
     }
+    notifyListeners();
+    return listPostForUser;
   }
 
   get getAllListForUser {
@@ -111,7 +116,7 @@ class PostProvider extends ChangeNotifier {
     List<Post> listNewPostUser = [];
     Response response = await get(Uri.parse(ApiUrl.getPostUserUrl),
         headers: {'Authorization': 'Bearer ' + token});
-  
+
     if (response.statusCode == 200) {
       var responseData = jsonDecode(response.body);
       for (Map i in responseData['posts']) {
@@ -129,12 +134,11 @@ class PostProvider extends ChangeNotifier {
         listNewPostUser.add(post);
         listPostUser = listNewPostUser;
       }
-
-      notifyListeners();
-      return listPostUser;
     } else {
       throw Exception('Failed to load.');
     }
+    notifyListeners();
+    return listPostUser;
   }
 
   get getPostUserList {
@@ -154,7 +158,12 @@ class PostProvider extends ChangeNotifier {
       throw Exception('Failed to load.');
   }
 
-  notify() {
-    notifyListeners();
+  Future<void> deletePost(String id, String token) async {
+    Response response = await post(Uri.parse(ApiUrl.deletePost),
+        body: {'postID': id}, headers: {'Authorization': 'Bearer ' + token});
+    if (response.statusCode == 200) {
+      print('ok');
+    } else
+      print(response.statusCode);
   }
 }

@@ -4,14 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/models/post.dart';
+import 'package:test/models/user.dart';
+import 'package:test/models/users.dart';
 
 import 'package:test/provider/post_provider.dart';
+import 'package:test/provider/user_provider.dart';
 
 import 'package:test/screens/posts/new_post.dart';
 import 'package:test/screens/posts/post_item.dart';
+import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -19,19 +25,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Post> list = [];
-
-  String? token;
+  List<Users> listUser = [];
+  int? current;
 
   @override
   void initState() {
     super.initState();
-    getToken();
   }
 
   @override
   Widget build(BuildContext context) {
-    PostProvider postProvider = Provider.of<PostProvider>(context);
-    postProvider.getAllPost();
+    User user = Provider.of<UserProvider>(context).user;
+    var userProvider = context.watch<UserProvider>();
+    userProvider.getAllUserForUser();
+    listUser = userProvider.getAllUserForUserList;
+    var postProvider = context.watch<PostProvider>();
+    postProvider.getAllPost(listUser, user.iduser!);
     list = postProvider.getAllList;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 240, 240, 240),
@@ -45,41 +54,52 @@ class _HomePageState extends State<HomePage> {
                         context)),
                 SliverFixedExtentList(
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      return Container(
-                        padding: EdgeInsets.only(top: 5),
-                        color: Colors.white,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            CreatNewPost(),
-                            ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, index) => UserOnl(),
-                            )
-                          ],
+                      return ChangeNotifierProvider(
+                        create: (_) => UserProvider(),
+                        child: Container(
+                          padding: EdgeInsets.only(top: 5),
+                          color: Colors.white,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              CreatNewPost(),
+                              ListView.builder(
+                                
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                itemCount: listUser.length,
+                                itemBuilder: (context, index) => UserOnl(
+                                    token: user.token!,
+                                    name: listUser[index].username!,
+                                    id: listUser[index].iduser!,
+                                    image: listUser[index].avatarImage!),
+                              )
+                            ],
+                          ),
                         ),
                       );
                     }, childCount: 1),
                     itemExtent: 100),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                      (context, index) => token != null && list.length != 0
+                      (context, index) => user.token != null && list.length != 0
                           ? ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemBuilder: (context, index) => Stories(
-                                  id: list[index].id,
-                                  token: token!,
-                                  userID: list[index].userID,
-                                  content: list[index].content,
-                                  image: list[index].images,
-                                  type: list[index].type,
-                                  avatar: list[index].avatar,
-                                  like: list[index].like,
-                                  createdAt: list[index].createdAt,
-                                  username: list[index].username),
+                                  id: list[list.length - 1 - index].id,
+                                  token: user.token!,
+                                  userID: list[list.length - 1 - index].userID,
+                                  content:
+                                      list[list.length - 1 - index].content,
+                                  image: list[list.length - 1 - index].images,
+                                  type: list[list.length - 1 - index].type,
+                                  avatar: list[list.length - 1 - index].avatar,
+                                  like: list[list.length - 1 - index].like,
+                                  createdAt:
+                                      list[list.length - 1 - index].createdAt,
+                                  username:
+                                      list[list.length - 1 - index].username),
                               itemCount: list.length,
                             )
                           : Container(
@@ -101,40 +121,61 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  Future<String?> getToken() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? _token = await pref.getString('token');
-    setState(() {
-      token = _token;
-    });
-    // print(token);
-    return "Ok";
-  }
 }
 
 class UserOnl extends StatelessWidget {
-  const UserOnl({
-    Key? key,
-  }) : super(key: key);
-
+  const UserOnl(
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.id,
+      required this.token})
+      : super(key: key);
+  final String image;
+  final String name;
+  final String id;
+  final String token;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) =>
+                  ProfileFriendPage(userID: id, token: token)));
+        },
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(
+            height: 70,
+            width: 70,
             margin: EdgeInsets.only(right: 10, left: 10),
-            child: CircleAvatar(
-              radius: 35,
-              backgroundColor: Colors.white,
-              backgroundImage: AssetImage("images/profile.jpg"),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(50)),
+              child: Image.network(
+                image,
+                fit: BoxFit.cover,
+                errorBuilder: (context, url, StackTrace? error) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(50)),
+                    child: Image.asset(
+                      "images/background.png",
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) =>
+                    loadingProgress == null
+                        ? child
+                        : Container(
+                            child: Center(
+                            child: CircularProgressIndicator(),
+                          )),
+              ),
             ),
           ),
           Container(
             margin: EdgeInsets.only(right: 10, left: 10),
             child: Text(
-              "User",
+              name,
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
