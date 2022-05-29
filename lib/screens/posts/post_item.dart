@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:like_button/like_button.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/api/api_url.dart';
 import 'package:test/item/tittle/tittle.dart';
+import 'package:test/models/user.dart';
 import 'package:test/provider/post_provider.dart';
+import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
 import 'package:test/screens/posts/comment/comment_screen.dart';
 import 'package:test/screens/posts/type_post.dart';
@@ -42,14 +45,14 @@ class Stories extends StatefulWidget {
 
 class _StoriesState extends State<Stories> {
   PostProvider? postProvider;
-  bool _isLike = false;
   bool isLike = false;
+  bool isDelete = false;
   late String shortText;
   late String longText;
   bool isText = false;
   bool isLoad = false;
   bool isMyPost = false;
-  String? _iduser;
+  User? user;
   int likeCount = 0;
 
   var typePostRow = [
@@ -67,7 +70,6 @@ class _StoriesState extends State<Stories> {
   @override
   void initState() {
     super.initState();
-    getId();
 
     if (widget.content.length > 200) {
       shortText = widget.content.substring(0, 200);
@@ -80,9 +82,10 @@ class _StoriesState extends State<Stories> {
 
   @override
   Widget build(BuildContext context) {
-    if (_iduser != null) {
+    user = Provider.of<UserProvider>(context).user;
+    if (user!.token != null) {
       checkLike();
-      if (_iduser == widget.userID) {
+      if (user!.iduser == widget.userID) {
         setState(() {
           isMyPost = true;
         });
@@ -100,7 +103,7 @@ class _StoriesState extends State<Stories> {
           child: isLoad
               ? Column(
                   children: [
-                    inforUser(),
+                    inforUser(context),
                     textContent(),
                     imageContent(context),
                   ],
@@ -115,9 +118,9 @@ class _StoriesState extends State<Stories> {
   }
 
   Future<bool> checkLike() async {
+    int _likeCount = 0;
     for (Map i in widget.like) {
-      int _likeCount = 0;
-      if (i['userid'] == _iduser) {
+      if (i['userid'] == user!.iduser!) {
         if (i['liked'] == 1) {
           _likeCount++;
           setState(() {
@@ -134,18 +137,9 @@ class _StoriesState extends State<Stories> {
     }
 
     setState(() {
-      _isLike = isLike;
       isLoad = true;
     });
     return isLike;
-  }
-
-  Future<void> getId() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? id = pref.getString('_id');
-    setState(() {
-      _iduser = id;
-    });
   }
 
   Stack imageContent(BuildContext context) {
@@ -203,9 +197,19 @@ class _StoriesState extends State<Stories> {
   }
 
   String timeago({bool numericDates = true}) {
+    int hour = int.parse(widget.createdAt.substring(11, 13)) + 7;
+    String _hour;
+    if (hour < 10) {
+      _hour = '0' + hour.toString();
+    } else
+      _hour = hour.toString();
     final dateAt = widget.createdAt.substring(0, 10) +
         ' ' +
-        widget.createdAt.substring(11, 19);
+        _hour +
+        ':' +
+        widget.createdAt.substring(14, 16) +
+        ':' +
+        widget.createdAt.substring(17, 19);
     DateTime tempDate = DateTime.parse(dateAt);
     final difference = DateTime.now().difference(tempDate);
     if ((difference.inDays / 7).floor() >= 1) {
@@ -222,8 +226,6 @@ class _StoriesState extends State<Stories> {
       return '${difference.inMinutes} minutes ago';
     } else if (difference.inMinutes >= 1) {
       return (numericDates) ? '1 minute ago' : 'A minute ago';
-    } else if (difference.inSeconds >= 3) {
-      return '${difference.inSeconds} seconds ago';
     } else {
       return 'Just now';
     }
@@ -260,7 +262,7 @@ class _StoriesState extends State<Stories> {
                 return onLikeButtonTapped(isLiked);
               },
               padding: EdgeInsets.only(left: 20),
-              isLiked: _isLike,
+              isLiked: isLike,
               likeCount: likeCount,
               likeBuilder: (isLiked) {
                 final color = isLiked ? Colors.red : Colors.grey;
@@ -355,7 +357,8 @@ class _StoriesState extends State<Stories> {
     );
   }
 
-  GestureDetector inforUser() {
+  GestureDetector inforUser(BuildContext context) {
+    postProvider = context.watch<PostProvider>();
     return GestureDetector(
       onTap: () async {
         isMyPost
@@ -416,7 +419,51 @@ class _StoriesState extends State<Stories> {
               )
             ],
           ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
+          user!.iduser == widget.userID
+              ? IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(15))),
+                        context: context,
+                        builder: (context) => Padding(
+                              padding: MediaQuery.of(context).viewInsets,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  setState(() {
+                                    isDelete = true;
+                                  });
+                                  await postProvider!
+                                      .deletePost(widget.id, user!.token!);
+                                  Navigator.pop(context);
+                                },
+                                child: isDelete
+                                    ? Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.vertical(
+                                                top: Radius.circular(15))),
+                                        child: Center(
+                                            child: CircularProgressIndicator()),
+                                      )
+                                    : Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.vertical(
+                                                top: Radius.circular(15))),
+                                        height: 70,
+                                        child: Center(
+                                            child: Tittle(
+                                                text: "Delete Post",
+                                                size: 20,
+                                                color: Colors.black)),
+                                      ),
+                              ),
+                            ));
+                  },
+                  icon: Icon(Icons.more_vert))
+              : Container()
         ],
       ),
     );

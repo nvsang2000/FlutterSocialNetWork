@@ -8,9 +8,7 @@ import 'package:test/models/friend.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/edit_infor_provider.dart';
 import 'package:test/provider/user_provider.dart';
-import 'package:test/screens/profile_widget/my_profile/edit_widget/edit_text_widget.dart';
-import 'package:test/screens/profile_widget/profile_user/edit_widget/edit_date_widget.dart';
-import 'package:test/screens/profile_widget/profile_user/edit_widget/edit_gender_widget.dart';
+
 
 
 class InformationFriend extends StatefulWidget {
@@ -53,48 +51,12 @@ class _InformationFriendState extends State<InformationFriend> {
             Navigator.pop(context);
           },
         ),
-        RefreshIndicator(
-          onRefresh: () async {
-            User user = await Provider.of<UserProvider>(context).user;
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            height: MediaQuery.of(context).size.height * 0.893,
-            child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return itemInfor(icon[index], title[index], content[index], () {
-                  if (title[index] == "Gender") {
-                    showBottomWidget(context, data, index, content,
-                        EditGender(data: data[index], content: content[index]));
-                  } else if (title[index] == "Birthday") {
-                    showBottomWidget(context, data, index, content,
-                        EditDate(data: data[index], content: content[index]));
-                  } else {
-                    showBottomWidget(context, data, index, content,
-                        EditText(data: data[index], content: content[index]));
-                  }
-                });
-              },
-            ),
-          ),
-        )
+      
       ]),
     ));
   }
 
-  Future<dynamic> showBottomWidget(BuildContext context, List<String> data,
-      int index, List<String> content, Widget child) {
-    return showModalBottomSheet(
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
-        context: context,
-        builder: (context) => Padding(
-              padding: MediaQuery.of(context).viewInsets,
-              child: child,
-            ));
-  }
+ 
 
   Container itemInfor(
       IconData icon, String tittle, String content, VoidCallback onTap) {

@@ -28,6 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   User? _user;
   String? token;
   String? _iduser;
+  int? totalImage;
   @override
   void initState() {
     // TODO: implement initState
@@ -39,19 +40,16 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
-
-    User user = Provider.of<UserProvider>(context).user;
-    if (token != null) {
-      if (_iduser != null) {
-        UserProvider userProvider = Provider.of<UserProvider>(context);
-        userProvider.getUser(token!, _iduser!);
-        _user = userProvider.userF;
-      }
+    _user = Provider.of<UserProvider>(context).user;
+    if (_user!.token != null) {
       PostProvider postProvider = Provider.of<PostProvider>(context);
-      postProvider.getAllPostUser(token!);
+      postProvider.getAllPostUser(_user!.token!);
 
       list = postProvider.getPostUserList;
     }
+    var userProvider = context.watch<UserProvider>();
+    userProvider.getTotalImage();
+    totalImage = userProvider.totalImage;
     return Scaffold(
         body: SafeArea(
       top: !widget.isBool,
@@ -64,111 +62,93 @@ class _ProfilePageState extends State<ProfilePage> {
                         context),
                   )
                 : SliverToBoxAdapter(),
-            _user != null
-                ? SliverToBoxAdapter(
-                    child: ListView(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
+            SliverToBoxAdapter(
+                child: ListView(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              children: [
+                TopWidget(
+                    coverHeight: coverHeight,
+                    avartaHeight: avartaHeight,
+                    isBool: widget.isBool),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TopWidget(
-                          coverHeight: coverHeight,
-                          avatar: _user!.avatarImage!,
-                          cover: _user!.coverImage!,
-                          avartaHeight: avartaHeight,
-                          isBool: widget.isBool),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              user.username!,
-                              style: TextStyle(
-                                  fontSize: 25, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              user.about!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Color.fromARGB(255, 150, 142, 142)),
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Row(
-                              children: [
-                                MenuWidget(
-                                    menu: "Post",
-                                    index: list.length,
-                                    width: menuWidth),
-                                MenuWidget(
-                                    menu: "Photos",
-                                    index: 100,
-                                    width: menuWidth),
-                                MenuWidget(
-                                    menu: "Followers",
-                                    index: _user != null
-                                        ? _user!.followers!.length
-                                        : 999,
-                                    width: menuWidth),
-                                MenuWidget(
-                                    menu: "Following",
-                                    index: _user != null
-                                        ? _user!.following!.length
-                                        : 999,
-                                    width: menuWidth),
-                              ],
-                              mainAxisAlignment: MainAxisAlignment.center,
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Menu2Widget(
-                              menuWidth: menuWidth * 0.8,
-                              isBool: true,
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => Information()));
-                              },
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            list.length != 0
-                                ? Align(
-                                    child: Tittle(
-                                        text: "Posts",
-                                        size: 24,
-                                        color: Colors.black),
-                                    alignment: Alignment.topLeft,
-                                  )
-                                : Container()
-                          ],
-                        ),
-                      )
-                    ],
-                  ))
-                : SliverToBoxAdapter(
-                    child: Container(
-                      margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.1),
-                      child: Center(
-                        child: SizedBox(
-                          child: CircularProgressIndicator(),
-                          height: 50,
-                          width: 50,
-                        ),
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
+                      Text(
+                        _user!.username!,
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        _user!.about!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Color.fromARGB(255, 150, 142, 142)),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        children: [
+                          MenuWidget(
+                              menu: "Post",
+                              index: list.length,
+                              width: menuWidth),
+                          MenuWidget(
+                              menu: "Photos",
+                              index: totalImage!,
+                              width: menuWidth),
+                          MenuWidget(
+                              menu: "Followers",
+                              index: _user != null
+                                  ? _user!.followers!.length
+                                  : 999,
+                              width: menuWidth),
+                          MenuWidget(
+                              menu: "Following",
+                              index: _user != null
+                                  ? _user!.following!.length
+                                  : 999,
+                              width: menuWidth),
+                        ],
+                        mainAxisAlignment: MainAxisAlignment.center,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Menu2Widget(
+                        menuWidth: menuWidth * 0.8,
+                        isBool: true,
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => Information()));
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      list.length != 0
+                          ? Align(
+                              child: Tittle(
+                                  text: "Posts", size: 24, color: Colors.black),
+                              alignment: Alignment.topLeft,
+                            )
+                          : Container()
+                    ],
                   ),
+                )
+              ],
+            )),
             SliverList(
               delegate: SliverChildBuilderDelegate(
                   (context, index) => token != null && list.length != 0
@@ -176,16 +156,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemBuilder: (context, index) => Stories(
-                              id: list[index].id,
+                              id: list[list.length - 1 - index].id,
                               token: token!,
-                              userID: list[index].userID,
-                              content: list[index].content,
-                              image: list[index].images,
-                              type: list[index].type,
-                              avatar: list[index].avatar,
-                              like: list[index].like,
-                              createdAt: list[index].createdAt,
-                              username: list[index].username),
+                              userID: list[list.length - 1 - index].userID,
+                              content: list[list.length - 1 - index].content,
+                              image: list[list.length - 1 - index].images,
+                              type: list[list.length - 1 - index].type,
+                              avatar: list[list.length - 1 - index].avatar,
+                              like: list[list.length - 1 - index].like,
+                              createdAt:
+                                  list[list.length - 1 - index].createdAt,
+                              username: list[list.length - 1 - index].username),
                           itemCount: list.length,
                         )
                       : Container(),

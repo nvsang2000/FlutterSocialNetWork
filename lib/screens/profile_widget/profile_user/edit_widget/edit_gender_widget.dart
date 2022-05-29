@@ -29,7 +29,6 @@ class _EditGenderState extends State<EditGender> {
   bool isLoading = false;
   void initState() {
     super.initState();
-
     getToken();
     typeGender = int.parse(widget.content);
   }
@@ -67,7 +66,7 @@ class _EditGenderState extends State<EditGender> {
                         });
                       }),
                   SizedBox(
-                    width: 10,
+                    width: 5,
                   ),
                   Tittle(text: "Other", size: 20, color: Colors.black)
                 ],
@@ -83,7 +82,7 @@ class _EditGenderState extends State<EditGender> {
                         });
                       }),
                   SizedBox(
-                    width: 10,
+                    width: 5,
                   ),
                   Tittle(text: "Male", size: 20, color: Colors.black)
                 ],
@@ -99,7 +98,7 @@ class _EditGenderState extends State<EditGender> {
                         });
                       }),
                   SizedBox(
-                    width: 10,
+                    width: 5,
                   ),
                   Tittle(text: "Female", size: 20, color: Colors.black)
                 ],
