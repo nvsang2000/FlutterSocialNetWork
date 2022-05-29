@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/post.dart';
 import 'package:test/models/user.dart';
@@ -25,16 +24,13 @@ class _ProfilePageState extends State<ProfilePage> {
   double coverHeight = 200;
   double avartaHeight = 120;
   List<Post> list = [];
+
   User? _user;
-  String? token;
-  String? _iduser;
+
   int? totalImage;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    getToken();
-    getId();
   }
 
   @override
@@ -44,7 +40,6 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_user!.token != null) {
       PostProvider postProvider = Provider.of<PostProvider>(context);
       postProvider.getAllPostUser(_user!.token!);
-
       list = postProvider.getPostUserList;
     }
     var userProvider = context.watch<UserProvider>();
@@ -130,8 +125,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         menuWidth: menuWidth * 0.8,
                         isBool: true,
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Information()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Information()));
                         },
                       ),
                       SizedBox(
@@ -151,22 +148,23 @@ class _ProfilePageState extends State<ProfilePage> {
             )),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                  (context, index) => token != null && list.length != 0
+                  (context, index) => list.length != 0
                       ? ListView.builder(
+                          reverse: true,
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemBuilder: (context, index) => Stories(
-                              id: list[list.length - 1 - index].id,
-                              token: token!,
-                              userID: list[list.length - 1 - index].userID,
-                              content: list[list.length - 1 - index].content,
-                              image: list[list.length - 1 - index].images,
-                              type: list[list.length - 1 - index].type,
-                              avatar: list[list.length - 1 - index].avatar,
-                              like: list[list.length - 1 - index].like,
-                              createdAt:
-                                  list[list.length - 1 - index].createdAt,
-                              username: list[list.length - 1 - index].username),
+                              comment: list[index].comment,
+                              id: list[index].id,
+                              token: _user!.token!,
+                              userID: list[index].userID,
+                              content: list[index].content,
+                              image: list[index].images,
+                              type: list[index].type,
+                              avatar: list[index].avatar,
+                              like: list[index].like,
+                              createdAt: list[index].createdAt,
+                              username: list[index].username),
                           itemCount: list.length,
                         )
                       : Container(),
@@ -176,23 +174,5 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     ));
-  }
-
-  Future<void> getId() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? id = pref.getString('_id');
-    setState(() {
-      _iduser = id;
-    });
-  }
-
-  Future<String?> getToken() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? _token = await pref.getString('token');
-    setState(() {
-      token = _token;
-    });
-    // print(token);
-    return "Ok";
   }
 }

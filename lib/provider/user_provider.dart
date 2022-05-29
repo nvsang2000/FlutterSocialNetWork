@@ -102,6 +102,10 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  get clearUserInfo {
+    return userF = null;
+  }
+
   get friendInfo {
     return userF;
   }
@@ -115,7 +119,7 @@ class UserProvider extends ChangeNotifier {
       List<dynamic> responseData = json.decode(response.body)['urls'];
       indexImage = responseData.length;
     } else {
-      print(response.statusCode);
+      print("getTotal ${response.statusCode}");
     }
   }
 

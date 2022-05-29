@@ -4,12 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:test/api/api_url.dart';
+import 'package:test/models/comments.dart';
 import 'package:test/models/post.dart';
 import 'package:test/models/users.dart';
 
 class PostProvider extends ChangeNotifier {
   Future<StreamedResponse> newPost(
       String token, String content, String type, File image) async {
+    print(content);
     String name = image.path.split("/").last;
     var request = MultipartRequest('POST', Uri.parse(ApiUrl.newPostUrl));
 
@@ -52,6 +54,7 @@ class PostProvider extends ChangeNotifier {
         for (String p in allID) {
           if (p != i['ownerid']['_id']) continue;
           Post post = await Post(
+              comment: i['list_comment'],
               id: i['_id'],
               userID: i['ownerid']['_id'],
               like: i['like'],
@@ -65,11 +68,11 @@ class PostProvider extends ChangeNotifier {
           listPost = listNewPost;
         }
       }
+      notifyListeners();
+      return listPost;
     } else {
       throw Exception('Failed to load.');
     }
-    notifyListeners();
-    return listPost;
   }
 
   get getAllList {
@@ -88,6 +91,7 @@ class PostProvider extends ChangeNotifier {
       for (Map i in responseData['posts']) {
         if (i['ownerid']['_id'] != id) continue;
         Post post = await Post(
+            comment: i['list_comment'],
             id: i['_id'],
             userID: i['ownerid']['_id'],
             like: i['like'],
@@ -100,11 +104,15 @@ class PostProvider extends ChangeNotifier {
         listNewPostForUser.add(post);
         listPostForUser = listNewPostForUser;
       }
+      notifyListeners();
+      return listPostForUser;
     } else {
       throw Exception('Failed to load.');
     }
-    notifyListeners();
-    return listPostForUser;
+  }
+
+  get clearListPost {
+    return listPostForUser.clear();
   }
 
   get getAllListForUser {
@@ -122,6 +130,7 @@ class PostProvider extends ChangeNotifier {
       for (Map i in responseData['posts']) {
         if (i['ownerid'] == null) continue;
         Post post = await Post(
+            comment: i['list_comment'],
             id: i['_id'],
             userID: i['ownerid']['_id'],
             like: i['like'],
@@ -134,11 +143,11 @@ class PostProvider extends ChangeNotifier {
         listNewPostUser.add(post);
         listPostUser = listNewPostUser;
       }
+      notifyListeners();
+      return listPostUser;
     } else {
       throw Exception('Failed to load.');
     }
-    notifyListeners();
-    return listPostUser;
   }
 
   get getPostUserList {
@@ -164,6 +173,50 @@ class PostProvider extends ChangeNotifier {
     if (response.statusCode == 200) {
       print('ok');
     } else
-      print(response.statusCode);
+       print("deletePost ${response.statusCode}");
+  }
+
+  Future<void> addComment(String id, String token, String comment) async {
+    Response response = await post(Uri.parse(ApiUrl.addComment + id),
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: json.encode({'message': comment}));
+    if (response.statusCode == 200) {
+      print('ok');
+    } else
+       print("addComment ${response.statusCode}");
+  }
+
+  List<Comments> commentsList = [];
+  Future<void> getComment(String id, String token) async {
+    List<Comments> newComments = [];
+    Response response = await get(Uri.parse(ApiUrl.addComment + id), headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    });
+    if (response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      for (Map i in responseData['comments']) {
+        Comments comments = await Comments(
+            id: i['userid']['_id'],
+            image: i['userid']['avatar'],
+            message: i['message'],
+            username: i['userid']['username'],
+            time: i['createdAt']);
+        newComments.add(comments);
+        commentsList = newComments;
+      }
+    } else
+      print("getComment ${response.statusCode}");
+  }
+
+  get clearComment {
+    return commentsList.clear();
+  }
+
+  get commentList {
+    return commentsList;
   }
 }

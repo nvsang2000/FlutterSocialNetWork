@@ -1,7 +1,11 @@
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:test/item/tittle/tittle.dart';
+import 'package:test/models/friend.dart';
+import 'package:test/models/user.dart';
+import 'package:test/provider/friend_provider.dart';
+import 'package:test/provider/user_provider.dart';
 
 import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
@@ -25,11 +29,22 @@ class UserItem extends StatefulWidget {
 class _UserItemState extends State<UserItem> {
   @override
   Widget build(BuildContext context) {
+    User user = Provider.of<UserProvider>(context).user;
+    // FriendProvider provider = context.watch<FriendProvider>();
+    // provider.getUser(widget.token, widget.id);
+    // UserFriend? userFriend = provider.friendInfo;
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) =>
-                ProfileFriendPage(userID: widget.id, token: widget.token)),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          FriendProvider friend = context.read<FriendProvider>();
+          friend.clearUser;
+          return ProfileFriendPage(
+            userID: widget.id,
+            token: widget.token,
+            listFollow: user.following!,
+          );
+        }),
       ),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),

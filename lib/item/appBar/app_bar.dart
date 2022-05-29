@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AppBarWidget extends StatelessWidget {
-  const AppBarWidget(
-      {Key? key, required this.name, required this.onTap})
+  const AppBarWidget({Key? key, required this.name, required this.onTap})
       : super(key: key);
   final String name;
   final VoidCallback onTap;
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 47,
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Row(
@@ -29,7 +28,6 @@ class AppBarWidget extends StatelessWidget {
             ),
           ],
         ),
-        
       ]),
     );
   }

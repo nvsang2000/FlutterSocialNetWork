@@ -24,7 +24,6 @@ class _SearchPageState extends State<SearchPage> {
   String query = '';
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getToken();
   }

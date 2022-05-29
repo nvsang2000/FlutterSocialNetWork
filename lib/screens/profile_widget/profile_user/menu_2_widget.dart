@@ -24,7 +24,7 @@ class Menu2Widget extends StatelessWidget {
             width: menuWidth,
             height: 35,
             child: Text(
-              "MY PROFILE",
+              "PROFILE",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             decoration: BoxDecoration(
