@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:test/models/friend.dart';
-import 'package:test/models/user.dart';
 import 'package:test/screens/profile_widget/friend/avarta_image_friend_widget.dart';
 import 'package:test/screens/profile_widget/friend/cover_image_friend_widget.dart';
 
 class TopFriendWidget extends StatelessWidget {
-  const TopFriendWidget({
-    Key? key,
-    required this.token,
-    required this.iduser,
-    required this.avatarUrl,
-    required this.coverUrl,
-    required this.coverHeight,
-    required this.avartaHeight,
-  }) : super(key: key);
+  const TopFriendWidget(
+      {Key? key,
+      required this.token,
+      required this.iduser,
+      required this.avatarUrl,
+      required this.coverUrl,
+      required this.coverHeight,
+      required this.avartaHeight,
+      required this.listFollow})
+      : super(key: key);
   final String coverUrl;
   final String token;
   final String iduser;
   final String avatarUrl;
   final double coverHeight;
   final double avartaHeight;
-
+  final List<String> listFollow;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -28,8 +27,11 @@ class TopFriendWidget extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
-          child: CoverImageFriendWidget(token:token,iduser:iduser,
-              coverHeight: coverHeight, urlImage: coverUrl),
+          child: CoverImageFriendWidget(listFollow: listFollow,
+              token: token,
+              iduser: iduser,
+              coverHeight: coverHeight,
+              urlImage: coverUrl),
           margin: EdgeInsets.only(bottom: avartaHeight / 2),
         ),
         Positioned(

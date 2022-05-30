@@ -45,38 +45,44 @@ class _InformationState extends State<Information> {
         child: Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(children: [
-        AppBarWidget(
-          name: "Information",
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        RefreshIndicator(
-          onRefresh: () async {
-            User user = await Provider.of<UserProvider>(context).user;
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            height: MediaQuery.of(context).size.height * 0.893,
-            child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return itemInfor(icon[index], title[index], content[index], () {
-                  if (title[index] == "Gender") {
-                    showBottomWidget(context, data, index, content,
-                        EditGender(data: data[index], content: content[index]));
-                  } else if (title[index] == "Birthday") {
-                    showBottomWidget(context, data, index, content,
-                        EditDate(data: data[index], content: content[index]));
-                  } else {
-                    showBottomWidget(context, data, index, content,
-                        EditText(data: data[index], content: content[index]));
-                  }
-                });
-              },
-            ),
+        Expanded(
+          flex: 1,
+          child: AppBarWidget(
+            name: "Information",
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
-        )
+        ),
+        Expanded(
+            flex: 9,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              height: MediaQuery.of(context).size.height * 0.893,
+              child: ListView.builder(
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return itemInfor(icon[index], title[index], content[index],
+                      () {
+                    if (title[index] == "Gender") {
+                      showBottomWidget(
+                          context,
+                          data,
+                          index,
+                          content,
+                          EditGender(
+                              data: data[index], content: content[index]));
+                    } else if (title[index] == "Birthday") {
+                      showBottomWidget(context, data, index, content,
+                          EditDate(data: data[index], content: content[index]));
+                    } else {
+                      showBottomWidget(context, data, index, content,
+                          EditText(data: data[index], content: content[index]));
+                    }
+                  });
+                },
+              ),
+            ))
       ]),
     ));
   }

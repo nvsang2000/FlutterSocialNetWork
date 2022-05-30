@@ -1,13 +1,13 @@
 // ignore_for_file: unused_local_variable
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test/item/image_widget/image.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/post.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
+import 'package:test/screens/all_image.dart';
 import 'package:test/screens/posts/post_item.dart';
 import 'package:test/screens/profile_widget/menu_widget.dart';
 import 'package:test/screens/profile_widget/profile_user/information_user.dart';
@@ -15,8 +15,10 @@ import 'package:test/screens/profile_widget/profile_user/menu_2_widget.dart';
 import 'package:test/screens/profile_widget/profile_user/top_widget.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key, required this.isBool}) : super(key: key);
+  const ProfilePage({Key? key, required this.isBool, required this.id})
+      : super(key: key);
   final bool isBool;
+  final String id;
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
@@ -26,30 +28,26 @@ class _ProfilePageState extends State<ProfilePage> {
   double avartaHeight = 120;
   List<Post> list = [];
   User? _user;
-  String? token;
-  String? _iduser;
-  int? totalImage;
+  String? id;
+  UserProvider? userProvider;
+  PostProvider? postProvider;
+  List<String> listImages = [];
   @override
   void initState() {
-    // TODO: implement initState
+    userProvider = context.read<UserProvider>();
+    userProvider!.getImages(widget.id);
+    postProvider = context.read<PostProvider>();
+
     super.initState();
-    getToken();
-    getId();
   }
 
   @override
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
     _user = Provider.of<UserProvider>(context).user;
-    if (_user!.token != null) {
-      PostProvider postProvider = Provider.of<PostProvider>(context);
-      postProvider.getAllPostUser(_user!.token!);
-
-      list = postProvider.getPostUserList;
-    }
-    var userProvider = context.watch<UserProvider>();
-    userProvider.getTotalImage();
-    totalImage = userProvider.totalImage;
+    postProvider!.getAllPostUser(_user!.token!);
+    list = postProvider!.getPostUserList;
+    listImages = userProvider!.listImages;
     return Scaffold(
         body: SafeArea(
       top: !widget.isBool,
@@ -106,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               width: menuWidth),
                           MenuWidget(
                               menu: "Photos",
-                              index: totalImage!,
+                              index: listImages.length,
                               width: menuWidth),
                           MenuWidget(
                               menu: "Followers",
@@ -130,10 +128,74 @@ class _ProfilePageState extends State<ProfilePage> {
                         menuWidth: menuWidth * 0.8,
                         isBool: true,
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Information()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Information()));
                         },
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      listImages.length > 0
+                          ? Align(
+                              child: Container(
+                                width: double.infinity,
+                                child: Stack(
+                                  children: [
+                                    Tittle(
+                                        text: "Images",
+                                        size: 24,
+                                        color: Colors.black),
+                                    listImages.length > 2
+                                        ? Positioned(
+                                            right: 0,
+                                            bottom: 0,
+                                            child: GestureDetector(
+                                              child: Text(
+                                                'See more...',
+                                                style: TextStyle(
+                                                    color: Colors.blue,
+                                                    fontSize: 16),
+                                              ),
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AllImagePage(
+                                                                list:
+                                                                    listImages)));
+                                              },
+                                            ))
+                                        : Container()
+                                  ],
+                                ),
+                              ),
+                              alignment: Alignment.topLeft,
+                            )
+                          : Container(),
+                      listImages.length > 0
+                          ? Container(
+                              height: 200,
+                              child: Row(
+                                children: [
+                                  listImages.length > 0
+                                      ? Expanded(
+                                          child: ImageSee1(image: listImages[0]),
+                                          flex: 1,
+                                        )
+                                      : Container(),
+                                  listImages.length > 1
+                                      ? Expanded(
+                                          child: ImageSee2(image: listImages[1]),
+                                          flex: 1,
+                                        )
+                                      : Container()
+                                ],
+                              ),
+                            )
+                          : Container(),
                       SizedBox(
                         height: 10,
                       ),
@@ -151,22 +213,24 @@ class _ProfilePageState extends State<ProfilePage> {
             )),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                  (context, index) => token != null && list.length != 0
+                  (context, index) => list.length != 0
                       ? ListView.builder(
+                          reverse: true,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemBuilder: (context, index) => Stories(
-                              id: list[list.length - 1 - index].id,
-                              token: token!,
-                              userID: list[list.length - 1 - index].userID,
-                              content: list[list.length - 1 - index].content,
-                              image: list[list.length - 1 - index].images,
-                              type: list[list.length - 1 - index].type,
-                              avatar: list[list.length - 1 - index].avatar,
-                              like: list[list.length - 1 - index].like,
-                              createdAt:
-                                  list[list.length - 1 - index].createdAt,
-                              username: list[list.length - 1 - index].username),
+                              comment: list[index].comment,
+                              id: list[index].id,
+                              token: _user!.token!,
+                              userID: list[index].userID,
+                              content: list[index].content,
+                              image: list[index].images,
+                              type: list[index].type,
+                              avatar: list[index].avatar,
+                              like: list[index].like,
+                              createdAt: list[index].createdAt,
+                              username: list[index].username),
                           itemCount: list.length,
                         )
                       : Container(),
@@ -176,23 +240,5 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     ));
-  }
-
-  Future<void> getId() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? id = pref.getString('_id');
-    setState(() {
-      _iduser = id;
-    });
-  }
-
-  Future<String?> getToken() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? _token = await pref.getString('token');
-    setState(() {
-      token = _token;
-    });
-    // print(token);
-    return "Ok";
   }
 }

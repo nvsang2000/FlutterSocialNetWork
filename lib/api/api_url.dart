@@ -15,6 +15,7 @@ class ApiUrl {
   static const String getAllUser = url + 'all-user';
   static const String followUrl = url + 'user/follow/';
   static const String unfollowUrl = url + 'user/un-follow/';
-  static const String getTotalImage = url + 'user/all-images';
+  static const String getTotalImage = url + 'user/all-images/';
   static const String deletePost = url + 'user/delete-post/';
+  static const String addComment = url + 'user/comment-post/';
 }

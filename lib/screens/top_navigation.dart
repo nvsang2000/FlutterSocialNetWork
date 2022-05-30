@@ -1,7 +1,10 @@
 // ignore_for_file: type=lint
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:test/item/tittle/tittle.dart';
+import 'package:test/models/user.dart';
+import 'package:test/provider/user_provider.dart';
 
 import 'package:test/screens/BarItem/home_page.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
@@ -35,7 +38,7 @@ class _NavigationBarSCState extends State<NavigationBarSC>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {User _user = Provider.of<UserProvider>(context).user;
     return DefaultTabController(
       length: 3,
       child: NestedScrollView(
@@ -89,7 +92,7 @@ class _NavigationBarSCState extends State<NavigationBarSC>
             children: <Widget>[
               HomePage(),
               SearchPage(),
-              ProfilePage(
+              ProfilePage(id: _user.iduser!,
                 isBool: true,
               )
             ],

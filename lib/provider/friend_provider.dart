@@ -5,7 +5,8 @@ import 'package:test/api/api_url.dart';
 import 'package:test/models/friend.dart';
 
 class FriendProvider extends ChangeNotifier {
-  UserFriend? userFriend;
+  UserFriend _userFriend = UserFriend();
+
   Future<UserFriend> getUser(String token, String id) async {
     Response response = await get(Uri.parse(ApiUrl.profileUrl + id),
         headers: {'Authorization': 'Bearer ' + token});
@@ -13,7 +14,7 @@ class FriendProvider extends ChangeNotifier {
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
-      userFriend = UserFriend(
+      UserFriend userFriend = await UserFriend(
           followers: List<String>.from(responseData['data']['followers']),
           following: List<String>.from(responseData['data']['following']),
           id: responseData['data']['_id'],
@@ -24,12 +25,19 @@ class FriendProvider extends ChangeNotifier {
           coverImage: responseData['data']['cover'],
           gender: responseData['data']['gender'],
           username: responseData['data']['username']);
+      _userFriend = userFriend;
 
       notifyListeners();
-      return userFriend!;
+
+      return _userFriend;
     } else {
       throw Exception('Failed to load.');
     }
+  }
+
+  UserFriend get userFriend => this._userFriend;
+  get clearUser {
+    return _userFriend = UserFriend();
   }
 
   get friendInfo {

@@ -1,10 +1,10 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:test/item/button/button_choose_image/button_image.dart';
 import 'package:test/item/button/button_choose_image/image_dialog.dart';
 import 'package:test/item/textField/textfield_normal.dart';
@@ -29,7 +29,6 @@ class _NewPostState extends State<NewPost> {
   File? file;
   Post? post;
   PostProvider? _post;
-  String? _iduser;
   TextEditingController controller = TextEditingController();
   // bool isImage = false;
   int typePostInt = 0;
@@ -105,13 +104,15 @@ class _NewPostState extends State<NewPost> {
                 ? Container(child: CircularProgressIndicator())
                 : TextButton(
                     onPressed: () async {
+                      print(controller.text);
+
                       if (controller.text != null && file != null) {
                         setState(() {
                           postBool = true;
                         });
                         await _post!.newPost(_user!.token!, controller.text,
                             typePostInt.toString(), file!);
-                        controller.clear();
+
                         Navigator.pop(context);
                       } else
                         errorDialog(context,

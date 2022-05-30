@@ -1,23 +1,20 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:test/api/api_url.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/user.dart';
+import 'package:test/provider/friend_provider.dart';
 import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
-import 'package:test/screens/posts/comment/comment_screen.dart';
+import 'package:test/screens/posts/bottom_post.dart';
+import 'package:test/screens/posts/delete_widget.dart';
 import 'package:test/screens/posts/type_post.dart';
 import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 class Stories extends StatefulWidget {
   const Stories(
       {Key? key,
+      required this.comment,
       required this.id,
       required this.content,
       required this.image,
@@ -30,6 +27,7 @@ class Stories extends StatefulWidget {
       required this.token})
       : super(key: key);
   final String id;
+  final List<dynamic> comment;
   final String content;
   final List<dynamic> image;
   final String type;
@@ -45,16 +43,13 @@ class Stories extends StatefulWidget {
 
 class _StoriesState extends State<Stories> {
   PostProvider? postProvider;
-  bool isLike = false;
-  bool isDelete = false;
+
   late String shortText;
   late String longText;
   bool isText = false;
   bool isLoad = false;
   bool isMyPost = false;
   User? user;
-  int likeCount = 0;
-
   var typePostRow = [
     TypePost(
       type: "Friend",
@@ -84,7 +79,6 @@ class _StoriesState extends State<Stories> {
   Widget build(BuildContext context) {
     user = Provider.of<UserProvider>(context).user;
     if (user!.token != null) {
-      checkLike();
       if (user!.iduser == widget.userID) {
         setState(() {
           isMyPost = true;
@@ -93,53 +87,20 @@ class _StoriesState extends State<Stories> {
     }
 
     return GestureDetector(
-      child: Container(
-          margin: EdgeInsets.only(bottom: 15),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.white,
-          ),
-          child: isLoad
-              ? Column(
-                  children: [
-                    inforUser(context),
-                    textContent(),
-                    imageContent(context),
-                  ],
-                )
-              : Container(
-                  height: 50,
-                  width: 50,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ))),
-    );
-  }
-
-  Future<bool> checkLike() async {
-    int _likeCount = 0;
-    for (Map i in widget.like) {
-      if (i['userid'] == user!.iduser!) {
-        if (i['liked'] == 1) {
-          _likeCount++;
-          setState(() {
-            likeCount = _likeCount;
-            isLike = true;
-          });
-        } else {
-          setState(() {
-            likeCount = _likeCount;
-            isLike = false;
-          });
-        }
-      }
-    }
-
-    setState(() {
-      isLoad = true;
-    });
-    return isLike;
+        child: Container(
+            margin: EdgeInsets.only(bottom: 15),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                inforUser(context),
+                textContent(),
+                imageContent(context),
+              ],
+            )));
   }
 
   Stack imageContent(BuildContext context) {
@@ -189,7 +150,12 @@ class _StoriesState extends State<Stories> {
                   bottomRight: Radius.circular(400)),
               color: Colors.white,
             ),
-            child: Interactive(),
+            child: BottomPost(
+                commnet: widget.comment,
+                like: widget.like,
+                iduser: user!.iduser!,
+                idpost: widget.id,
+                token: widget.token),
           ),
         ),
       ],
@@ -231,110 +197,14 @@ class _StoriesState extends State<Stories> {
     }
   }
 
-  Future<bool> onLikeButtonTapped(bool isLiked) async {
-    Map<String, dynamic>? body;
-    if (isLiked)
-      body = {'statusLike': '0'};
-    else
-      body = {'statusLike': '1'};
-
-    Response response = await put(Uri.parse(ApiUrl.likePost + widget.id),
-        body: body, headers: {'Authorization': 'Bearer ' + widget.token});
-
-    if (response.statusCode == 200) {
-      var responseData = jsonDecode(response.body);
-      print(responseData['message']);
-
-      return !isLiked;
-    } else
-      throw Exception('Failed to load.');
-  }
-
-  Row Interactive() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            LikeButton(
-              onTap: (isLiked) {
-                return onLikeButtonTapped(isLiked);
-              },
-              padding: EdgeInsets.only(left: 20),
-              isLiked: isLike,
-              likeCount: likeCount,
-              likeBuilder: (isLiked) {
-                final color = isLiked ? Colors.red : Colors.grey;
-                final icon = isLiked ? Icons.favorite : Icons.favorite_outline;
-                return Icon(
-                  icon,
-                  color: color,
-                );
-              },
-              countBuilder: (count, isLiked, text) {
-                final color = isLiked ? Colors.black : Colors.grey;
-                return Text(
-                  '$likeCount',
-                  style: TextStyle(
-                      fontSize: 16, color: color, fontWeight: FontWeight.bold),
-                );
-              },
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            GestureDetector(
-              onTap: () => showModalBottomSheet(
-                // enableDrag: false,
-                // isDismissible: false,
-                isScrollControlled: true,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(15))),
-                context: context,
-                builder: (context) => CommentScreen(),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.message,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    '${widget.like.length}',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-        IconButton(
-            onPressed: () {
-              onLikeButtonTapped(true);
-            },
-            icon: Icon(
-              Icons.ios_share,
-              color: Colors.grey,
-            ),
-            splashColor: Colors.transparent)
-      ],
-    );
-  }
-
   GestureDetector textContent() {
     return GestureDetector(
       onTap: () {
-        setState(() {
+        if (widget.content.length>200) {
+          setState(() {
           isText = !isText;
         });
+        }
       },
       child: Container(
         alignment: Alignment.topLeft,
@@ -358,17 +228,24 @@ class _StoriesState extends State<Stories> {
   }
 
   GestureDetector inforUser(BuildContext context) {
-    postProvider = context.watch<PostProvider>();
     return GestureDetector(
       onTap: () async {
         isMyPost
             ? Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ProfilePage(
+                builder: (context) => ProfilePage(id: widget.userID,
                       isBool: false,
                     )))
-            : Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ProfileFriendPage(
-                    userID: widget.userID, token: widget.token)));
+            : Navigator.push(context, MaterialPageRoute(builder: (context) {
+                FriendProvider friend = context.read<FriendProvider>();
+                friend.clearUser;
+                PostProvider postProvider =
+                    Provider.of<PostProvider>(context, listen: false);
+                postProvider.clearListPost;
+                return ProfileFriendPage(
+                    listFollow: user!.following!,
+                    userID: widget.userID,
+                    token: widget.token);
+              }));
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -430,37 +307,11 @@ class _StoriesState extends State<Stories> {
                                 top: Radius.circular(15))),
                         context: context,
                         builder: (context) => Padding(
-                              padding: MediaQuery.of(context).viewInsets,
-                              child: GestureDetector(
-                                onTap: () async {
-                                  setState(() {
-                                    isDelete = true;
-                                  });
-                                  await postProvider!
-                                      .deletePost(widget.id, user!.token!);
-                                  Navigator.pop(context);
-                                },
-                                child: isDelete
-                                    ? Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.vertical(
-                                                top: Radius.circular(15))),
-                                        child: Center(
-                                            child: CircularProgressIndicator()),
-                                      )
-                                    : Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.vertical(
-                                                top: Radius.circular(15))),
-                                        height: 70,
-                                        child: Center(
-                                            child: Tittle(
-                                                text: "Delete Post",
-                                                size: 20,
-                                                color: Colors.black)),
-                                      ),
-                              ),
-                            ));
+                            padding: MediaQuery.of(context).viewInsets,
+                            child: DeleteWidget(
+                              id: widget.id,
+                              token: user!.token!,
+                            )));
                   },
                   icon: Icon(Icons.more_vert))
               : Container()

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:test/preference/user_peference.dart';
+import 'package:test/provider/post_provider.dart';
+import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/auth/login_page.dart';
 
 class Menu2Widget extends StatelessWidget {
@@ -24,7 +27,7 @@ class Menu2Widget extends StatelessWidget {
             width: menuWidth,
             height: 35,
             child: Text(
-              "MY PROFILE",
+              "PROFILE",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             decoration: BoxDecoration(
@@ -40,7 +43,11 @@ class Menu2Widget extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     alignment: Alignment.center,
                     splashColor: Colors.transparent,
-                    onPressed: () {
+                    onPressed: () async {
+                      var userProviders = context.watch<UserProvider>();
+                      var postProvider = context.watch<PostProvider>();
+                      userProviders.clearAllUserForUserList;
+                      postProvider.clearAllList;
                       UserPreference().removeUser();
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => LoginPage()));

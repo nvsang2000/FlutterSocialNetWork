@@ -8,8 +8,9 @@ class Post {
   List<dynamic> like;
   String userID;
   String id;
+  List<dynamic> comment;
   Post(
-      {required this.content,
+      {required this.content,required this.comment,
       required this.id,
       required this.userID,
       required this.images,
