@@ -7,10 +7,9 @@ import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/friend.dart';
 import 'package:test/provider/edit_infor_provider.dart';
 
-
-
 class InformationFriend extends StatefulWidget {
-  const InformationFriend({Key? key,required this.userFriend}) : super(key: key);
+  const InformationFriend({Key? key, required this.userFriend})
+      : super(key: key);
 
   final UserFriend userFriend;
   @override
@@ -20,7 +19,7 @@ class InformationFriend extends StatefulWidget {
 class _InformationFriendState extends State<InformationFriend> {
   @override
   Widget build(BuildContext context) {
-  
+    print(widget.userFriend);
     EditInforProvider edit = Provider.of<EditInforProvider>(context);
 
     var icon = [
@@ -43,21 +42,33 @@ class _InformationFriendState extends State<InformationFriend> {
         child: Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(children: [
-        AppBarWidget(
-          name: "Information",
-          onTap: () {
-            Navigator.pop(context);
-          },
+        Expanded(
+          child: AppBarWidget(
+            name: "Information",
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          flex: 1,
         ),
-      
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: MediaQuery.of(context).size.height * 0.893,
+            child: ListView.builder(
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return itemInfor(icon[index], title[index], content[index]);
+              },
+            ),
+          ),
+          flex: 9,
+        )
       ]),
     ));
   }
 
- 
-
-  Container itemInfor(
-      IconData icon, String tittle, String content, VoidCallback onTap) {
+  Container itemInfor(IconData icon, String tittle, String content) {
     return Container(
       padding: EdgeInsets.only(top: 5),
       child: Column(
@@ -66,7 +77,6 @@ class _InformationFriendState extends State<InformationFriend> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Tittle(text: tittle, size: 18, color: Colors.black),
-            
             ],
           ),
           Row(
@@ -94,7 +104,7 @@ class _InformationFriendState extends State<InformationFriend> {
           ),
           SizedBox(
             height: 10,
-          ),
+          ),  
           Divider(
             height: 2,
             color: Colors.grey,

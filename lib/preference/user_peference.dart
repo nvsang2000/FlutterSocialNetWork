@@ -74,7 +74,7 @@ class UserPreference {
     // pref.remove('email');
     // pref.remove('token');
     // pref.remove('username');
-    pref.clear();
+    await pref.clear();
   }
 
   Future<bool> saveToken(String token) async {

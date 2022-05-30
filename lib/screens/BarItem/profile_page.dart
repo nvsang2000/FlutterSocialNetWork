@@ -37,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
     _user = Provider.of<UserProvider>(context).user;
+
     if (_user!.token != null) {
       PostProvider postProvider = Provider.of<PostProvider>(context);
       postProvider.getAllPostUser(_user!.token!);
@@ -45,6 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
     var userProvider = context.watch<UserProvider>();
     userProvider.getTotalImage();
     totalImage = userProvider.totalImage;
+
     return Scaffold(
         body: SafeArea(
       top: !widget.isBool,

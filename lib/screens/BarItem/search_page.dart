@@ -33,7 +33,7 @@ class _SearchPageState extends State<SearchPage> {
     UserProvider userProvider = Provider.of<UserProvider>(context);
     userProvider.getAllUser();
     listUser = userProvider.getAllUserList;
-
+    print("searchpage");
     return Scaffold(
       body: Builder(
           builder: (context) => CustomScrollView(

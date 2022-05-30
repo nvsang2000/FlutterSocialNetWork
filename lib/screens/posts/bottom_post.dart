@@ -30,6 +30,7 @@ class _BottomPostState extends State<BottomPost> {
   @override
   void initState() {
     super.initState();
+
     checkLike();
   }
 
@@ -122,23 +123,17 @@ class _BottomPostState extends State<BottomPost> {
   }
 
   Future<void> checkLike() async {
-    int _likeCount = 0;
+    _isLike = false;
+    int _likeCount = widget.like.length;
     if (widget.like.length > 0) {
       for (Map i in widget.like) {
         if (i['userid'] == widget.iduser) {
           if (i['liked'] == 1) {
-            _likeCount++;
-
             _isLike = true;
-          } else {
-            _isLike = false;
           }
         }
       }
-    } else {
-      _isLike = false;
     }
-
     setState(() {
       likeCount = _likeCount;
       isLike = _isLike!;

@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
                   } else {
                     Provider.of<UserProvider>(context)
                         .setUser(snapshot.data as dynamic);
-                    return NavigationBarSC();
+                    return LoginPage();
                   }
               }
             },

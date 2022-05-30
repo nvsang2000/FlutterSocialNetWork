@@ -40,7 +40,7 @@ class Menu2Widget extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     alignment: Alignment.center,
                     splashColor: Colors.transparent,
-                    onPressed: () {
+                    onPressed: () async {
                       UserPreference().removeUser();
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => LoginPage()));

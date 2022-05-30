@@ -32,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("loginpage");
     Size size = MediaQuery.of(context).size;
     AuthProvider auth = Provider.of<AuthProvider>(context);
     void validate() {
@@ -48,8 +49,11 @@ class _LoginPageState extends State<LoginPage> {
             User user = response['user'];
             print(user.username);
             Provider.of<UserProvider>(context, listen: false).setUser(user);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => NavigationBarSC()));
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarSC(),
+                ),
+                (Route<dynamic> route) => false);
           } else {
             setState(() {
               isLoading = false;

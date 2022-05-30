@@ -119,7 +119,7 @@ class UserProvider extends ChangeNotifier {
       List<dynamic> responseData = json.decode(response.body)['urls'];
       indexImage = responseData.length;
     } else {
-      print("getTotal ${response.statusCode}");
+      // print("getTotal ${response.statusCode}");
     }
   }
 

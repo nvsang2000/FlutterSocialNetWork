@@ -146,6 +146,7 @@ class UserOnl extends StatelessWidget {
   final String token;
   @override
   Widget build(BuildContext context) {
+   
     return GestureDetector(
         onTap: () {
           FriendProvider friend = context.read<FriendProvider>();

@@ -89,10 +89,7 @@ class _CommentScreenState extends State<CommentScreen> {
               itemBuilder: (context, index) =>
                   CommentItem(comments: listComments[index]),
             )
-          : Container(
-              child: Center(
-              child: CircularProgressIndicator(),
-            )),
+          : Container(),
     );
   }
 }

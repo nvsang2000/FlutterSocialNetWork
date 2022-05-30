@@ -39,8 +39,6 @@ class _FollowButtonState extends State<FollowButton> {
   Widget build(BuildContext context) {
     UserProvider user = Provider.of<UserProvider>(context);
     var users = Provider.of<UserProvider>(context).user;
-    user.getUser(widget.token, users.iduser!);
-    _user = user.friendInfo;
     EditInforProvider edit = Provider.of<EditInforProvider>(context);
     return Container(
       padding: EdgeInsets.only(top: 20, right: 20, left: 20),
@@ -73,6 +71,7 @@ class _FollowButtonState extends State<FollowButton> {
                           await edit.getUser(widget.token, users.iduser!);
                       user.setUser(_user);
                       edit.notify();
+                      print(users.following);
                     },
                     child: Row(
                       children: [
@@ -116,19 +115,15 @@ class _FollowButtonState extends State<FollowButton> {
   }
 
   Future<void> checkFollow() async {
+    _isFriend = false;
     if (widget.listFollow.length >= 1) {
       for (String i in widget.listFollow) {
         if (widget.iduser == i) {
           _isFriend = true;
           break;
-        } else {
-          _isFriend = false;
         }
       }
-    } else {
-      _isFriend = false;
     }
-
     setState(() {
       isFriend = _isFriend!;
     });
