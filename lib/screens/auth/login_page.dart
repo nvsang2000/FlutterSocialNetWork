@@ -49,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
             User user = response['user'];
             print(user.username);
             Provider.of<UserProvider>(context, listen: false).setUser(user);
+           
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (context) => NavigationBarSC(),

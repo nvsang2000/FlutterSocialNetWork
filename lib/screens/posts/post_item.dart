@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test/item/tittle/tittle.dart';
-import 'package:test/models/friend.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/friend_provider.dart';
 import 'package:test/provider/post_provider.dart';
@@ -201,9 +200,11 @@ class _StoriesState extends State<Stories> {
   GestureDetector textContent() {
     return GestureDetector(
       onTap: () {
-        setState(() {
+        if (widget.content.length>200) {
+          setState(() {
           isText = !isText;
         });
+        }
       },
       child: Container(
         alignment: Alignment.topLeft,
@@ -231,12 +232,15 @@ class _StoriesState extends State<Stories> {
       onTap: () async {
         isMyPost
             ? Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ProfilePage(
+                builder: (context) => ProfilePage(id: widget.userID,
                       isBool: false,
                     )))
             : Navigator.push(context, MaterialPageRoute(builder: (context) {
                 FriendProvider friend = context.read<FriendProvider>();
                 friend.clearUser;
+                PostProvider postProvider =
+                    Provider.of<PostProvider>(context, listen: false);
+                postProvider.clearListPost;
                 return ProfileFriendPage(
                     listFollow: user!.following!,
                     userID: widget.userID,

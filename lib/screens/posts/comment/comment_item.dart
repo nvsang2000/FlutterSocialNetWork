@@ -23,7 +23,7 @@ class _CommentItemState extends State<CommentItem> {
   void initState() {
     super.initState();
     message = widget.comments.message;
-    if (message!.length > 200) {
+    if (message!.length > 110) {
       shortText = message!.substring(0, 110);
       longText = message!.substring(110, message!.length);
     } else {
@@ -55,7 +55,9 @@ class _CommentItemState extends State<CommentItem> {
             height: 5,
           ),
           GestureDetector(
-            onTap: () {
+            onTap: () {if(message!.length > 110)
+
+            
               setState(() {
                 isText = !isText;
               });

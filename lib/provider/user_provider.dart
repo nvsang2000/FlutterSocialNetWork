@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:test/api/api_url.dart';
@@ -70,6 +69,10 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  get clearAllUserForUserList {
+    return listUserForUser.clear();
+  }
+
   get getAllUserForUserList {
     return listUserForUser;
   }
@@ -110,20 +113,28 @@ class UserProvider extends ChangeNotifier {
     return userF;
   }
 
-  int indexImage = 0;
-  Future<void> getTotalImage() async {
-    Response response = await get(Uri.parse(ApiUrl.getTotalImage),
-        headers: {'Authorization': 'Bearer ' + _user.token!});
+  List<String> images = [];
+
+  Future<void> getImages(String id) async {
+    final response = await get(Uri.parse(ApiUrl.getTotalImage + id), headers: {
+      'Authorization': 'Bearer ' + _user.token!,
+      'Content-Type': 'application/json'
+    });
 
     if (response.statusCode == 200) {
+      print('ok');
       List<dynamic> responseData = json.decode(response.body)['urls'];
-      indexImage = responseData.length;
+      images = List<String>.from(responseData);
     } else {
-      // print("getTotal ${response.statusCode}");
+      print("getTotal ${response.statusCode}");
     }
   }
 
-  get totalImage {
-    return indexImage;
+  get clearImages {
+    return images.clear();
+  }
+
+  get listImages {
+    return images;
   }
 }

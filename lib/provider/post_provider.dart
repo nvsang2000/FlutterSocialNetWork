@@ -75,6 +75,10 @@ class PostProvider extends ChangeNotifier {
     }
   }
 
+  get clearAllList {
+    return listPost.clear();
+  }
+
   get getAllList {
     return listPost;
   }
@@ -173,7 +177,7 @@ class PostProvider extends ChangeNotifier {
     if (response.statusCode == 200) {
       print('ok');
     } else
-       print("deletePost ${response.statusCode}");
+      print("deletePost ${response.statusCode}");
   }
 
   Future<void> addComment(String id, String token, String comment) async {
@@ -186,7 +190,7 @@ class PostProvider extends ChangeNotifier {
     if (response.statusCode == 200) {
       print('ok');
     } else
-       print("addComment ${response.statusCode}");
+      print("addComment ${response.statusCode}");
   }
 
   List<Comments> commentsList = [];

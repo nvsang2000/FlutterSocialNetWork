@@ -1,14 +1,15 @@
 // ignore_for_file: unused_local_variable, unnecessary_null_comparison
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test/item/image_widget/image.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/friend.dart';
 import 'package:test/models/post.dart';
 import 'package:test/provider/friend_provider.dart';
 
 import 'package:test/provider/post_provider.dart';
+import 'package:test/provider/user_provider.dart';
+import 'package:test/screens/all_image.dart';
 import 'package:test/screens/posts/post_item.dart';
 import 'package:test/screens/profile_widget/friend/information_user.dart';
 import 'package:test/screens/profile_widget/friend/top_friend_widged.dart';
@@ -37,26 +38,27 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
   // UserFriend? userFriend;
   FriendProvider? friendProvider;
   List<Post> list = [];
-
+  List<String> listImages = [];
+  PostProvider? postProvider;
+  UserProvider? userProvider;
   @override
   void initState() {
     super.initState();
     print(widget.userID);
-
-    // FriendProvider friendProvider =
-    //     Provider.of<FriendProvider>(context, listen: false);
-    // friendProvider.clearUser;
+    postProvider = context.read<PostProvider>();
+    postProvider!.getAllPostForUser(widget.userID);
+    friendProvider = context.read<FriendProvider>();
+    friendProvider!.getUser(widget.token, widget.userID);
+    userProvider = context.read<UserProvider>();
+    userProvider!.getImages(widget.userID);
   }
 
   @override
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
-    PostProvider postProvider =
-        Provider.of<PostProvider>(context, listen: false);
-    postProvider.getAllPostForUser(widget.userID);
-    list = postProvider.getAllListForUser;
-    friendProvider = Provider.of<FriendProvider>(context);
-    friendProvider!.getUser(widget.token, widget.userID);
+
+    list = postProvider!.getAllListForUser;
+    listImages = userProvider!.listImages;
     UserFriend userFriend = Provider.of<FriendProvider>(context).userFriend;
     // userFriend = friendProvider.friendInfo;
     var icon = [
@@ -129,7 +131,7 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
                                 width: menuWidth),
                             MenuWidget(
                                 menu: "Photos",
-                                index: list.length + 2,
+                                index: listImages.length,
                                 width: menuWidth),
                             MenuWidget(
                                 menu: "Followers",
@@ -162,6 +164,70 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
                         SizedBox(
                           height: 10,
                         ),
+                        listImages.length > 0
+                            ? Align(
+                                child: Container(
+                                  width: double.infinity,
+                                  child: Stack(
+                                    children: [
+                                      Tittle(
+                                          text: "Images",
+                                          size: 24,
+                                          color: Colors.black),
+                                      listImages.length > 2
+                                          ? Positioned(
+                                              right: 0,
+                                              bottom: 0,
+                                              child: GestureDetector(
+                                                child: Text(
+                                                  'See more...',
+                                                  style: TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 16),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              AllImagePage(
+                                                                  list:
+                                                                      listImages)));
+                                                },
+                                              ))
+                                          : Container()
+                                    ],
+                                  ),
+                                ),
+                                alignment: Alignment.topLeft,
+                              )
+                            : Container(),
+                        listImages.length > 0
+                            ? Container(
+                                height: 200,
+                                child: Row(
+                                  children: [
+                                    listImages.length > 0
+                                        ? Expanded(
+                                            child:
+                                                ImageSee1(image: listImages[0]),
+                                            flex: 1,
+                                          )
+                                        : Container(),
+                                    listImages.length > 1
+                                        ? Expanded(
+                                            child:
+                                                ImageSee2(image: listImages[1]),
+                                            flex: 1,
+                                          )
+                                        : Container()
+                                  ],
+                                ),
+                              )
+                            : Container(),
+                        SizedBox(
+                          height: 10,
+                        ),
                         list.length != 0
                             ? Align(
                                 child: Tittle(
@@ -178,6 +244,7 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
                       ? ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
                           reverse: true,
                           itemBuilder: (context, index) => Stories(
                               comment: list[index].comment,

@@ -48,6 +48,8 @@ class _FollowButtonState extends State<FollowButton> {
           children: [
             IconButton(
                 onPressed: () {
+                  var userProvider = context.read<UserProvider>();
+                  userProvider.clearImages;
                   FriendProvider friend = context.read<FriendProvider>();
                   friend.clearUser;
                   Navigator.pop(context);

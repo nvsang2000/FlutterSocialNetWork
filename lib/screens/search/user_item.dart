@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:test/item/tittle/tittle.dart';
-import 'package:test/models/friend.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/friend_provider.dart';
+import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
 
 import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
@@ -39,6 +38,9 @@ class _UserItemState extends State<UserItem> {
         MaterialPageRoute(builder: (context) {
           FriendProvider friend = context.read<FriendProvider>();
           friend.clearUser;
+          PostProvider postProvider =
+              Provider.of<PostProvider>(context, listen: false);
+          postProvider.clearListPost;
           return ProfileFriendPage(
             userID: widget.id,
             token: widget.token,

@@ -1,12 +1,13 @@
 // ignore_for_file: unused_local_variable
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test/item/image_widget/image.dart';
 import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/post.dart';
 import 'package:test/models/user.dart';
 import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
+import 'package:test/screens/all_image.dart';
 import 'package:test/screens/posts/post_item.dart';
 import 'package:test/screens/profile_widget/menu_widget.dart';
 import 'package:test/screens/profile_widget/profile_user/information_user.dart';
@@ -14,8 +15,10 @@ import 'package:test/screens/profile_widget/profile_user/menu_2_widget.dart';
 import 'package:test/screens/profile_widget/profile_user/top_widget.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key, required this.isBool}) : super(key: key);
+  const ProfilePage({Key? key, required this.isBool, required this.id})
+      : super(key: key);
   final bool isBool;
+  final String id;
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
@@ -24,12 +27,17 @@ class _ProfilePageState extends State<ProfilePage> {
   double coverHeight = 200;
   double avartaHeight = 120;
   List<Post> list = [];
-
   User? _user;
-
-  int? totalImage;
+  String? id;
+  UserProvider? userProvider;
+  PostProvider? postProvider;
+  List<String> listImages = [];
   @override
   void initState() {
+    userProvider = context.read<UserProvider>();
+    userProvider!.getImages(widget.id);
+    postProvider = context.read<PostProvider>();
+
     super.initState();
   }
 
@@ -37,16 +45,9 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
     _user = Provider.of<UserProvider>(context).user;
-
-    if (_user!.token != null) {
-      PostProvider postProvider = Provider.of<PostProvider>(context);
-      postProvider.getAllPostUser(_user!.token!);
-      list = postProvider.getPostUserList;
-    }
-    var userProvider = context.watch<UserProvider>();
-    userProvider.getTotalImage();
-    totalImage = userProvider.totalImage;
-
+    postProvider!.getAllPostUser(_user!.token!);
+    list = postProvider!.getPostUserList;
+    listImages = userProvider!.listImages;
     return Scaffold(
         body: SafeArea(
       top: !widget.isBool,
@@ -103,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               width: menuWidth),
                           MenuWidget(
                               menu: "Photos",
-                              index: totalImage!,
+                              index: listImages.length,
                               width: menuWidth),
                           MenuWidget(
                               menu: "Followers",
@@ -136,6 +137,68 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(
                         height: 10,
                       ),
+                      listImages.length > 0
+                          ? Align(
+                              child: Container(
+                                width: double.infinity,
+                                child: Stack(
+                                  children: [
+                                    Tittle(
+                                        text: "Images",
+                                        size: 24,
+                                        color: Colors.black),
+                                    listImages.length > 2
+                                        ? Positioned(
+                                            right: 0,
+                                            bottom: 0,
+                                            child: GestureDetector(
+                                              child: Text(
+                                                'See more...',
+                                                style: TextStyle(
+                                                    color: Colors.blue,
+                                                    fontSize: 16),
+                                              ),
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AllImagePage(
+                                                                list:
+                                                                    listImages)));
+                                              },
+                                            ))
+                                        : Container()
+                                  ],
+                                ),
+                              ),
+                              alignment: Alignment.topLeft,
+                            )
+                          : Container(),
+                      listImages.length > 0
+                          ? Container(
+                              height: 200,
+                              child: Row(
+                                children: [
+                                  listImages.length > 0
+                                      ? Expanded(
+                                          child: ImageSee1(image: listImages[0]),
+                                          flex: 1,
+                                        )
+                                      : Container(),
+                                  listImages.length > 1
+                                      ? Expanded(
+                                          child: ImageSee2(image: listImages[1]),
+                                          flex: 1,
+                                        )
+                                      : Container()
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      SizedBox(
+                        height: 10,
+                      ),
                       list.length != 0
                           ? Align(
                               child: Tittle(
@@ -153,6 +216,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   (context, index) => list.length != 0
                       ? ListView.builder(
                           reverse: true,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemBuilder: (context, index) => Stories(

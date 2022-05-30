@@ -1,26 +1,19 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
-import 'package:test/models/friend.dart';
-
 import 'package:test/models/post.dart';
 import 'package:test/models/user.dart';
 import 'package:test/models/users.dart';
 import 'package:test/provider/friend_provider.dart';
-
 import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
-
 import 'package:test/screens/posts/new_post.dart';
 import 'package:test/screens/posts/post_item.dart';
 import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    Key? key,
-  }) : super(key: key);
-
+  const HomePage({Key? key, }) : super(key: key);
+  
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -146,12 +139,13 @@ class UserOnl extends StatelessWidget {
   final String token;
   @override
   Widget build(BuildContext context) {
-   
     return GestureDetector(
         onTap: () {
           FriendProvider friend = context.read<FriendProvider>();
           friend.clearUser;
-
+          PostProvider postProvider =
+              Provider.of<PostProvider>(context, listen: false);
+          postProvider.clearListPost;
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return ProfileFriendPage(
               // userFriend: userFriend,
