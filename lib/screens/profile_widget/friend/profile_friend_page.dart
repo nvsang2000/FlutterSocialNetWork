@@ -46,7 +46,7 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
     super.initState();
     print(widget.userID);
     postProvider = context.read<PostProvider>();
-    postProvider!.getAllPostForUser(widget.userID);
+    postProvider!.getPostForUser(widget.userID);
     friendProvider = context.read<FriendProvider>();
     friendProvider!.getUser(widget.token, widget.userID);
     userProvider = context.read<UserProvider>();
@@ -246,7 +246,7 @@ class _ProfileFriendPageState extends State<ProfileFriendPage> {
                           shrinkWrap: true,
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           reverse: true,
-                          itemBuilder: (context, index) => Stories(
+                          itemBuilder: (context, index) => Stories(length:  list.length,
                               comment: list[index].comment,
                               id: list[index].id,
                               token: widget.token,

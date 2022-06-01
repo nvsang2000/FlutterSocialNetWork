@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test/item/tittle/tittle.dart';
 import 'package:test/models/post.dart';
 import 'package:test/models/user.dart';
 import 'package:test/models/users.dart';
@@ -12,8 +13,10 @@ import 'package:test/screens/posts/post_item.dart';
 import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, }) : super(key: key);
-  
+  const HomePage({
+    Key? key,
+  }) : super(key: key);
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -87,6 +90,7 @@ class _HomePageState extends State<HomePage> {
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemBuilder: (context, index) => Stories(
+                                  length: list.length,
                                   comment: list[index].comment,
                                   id: list[index].id,
                                   token: user.token!,
@@ -106,9 +110,12 @@ class _HomePageState extends State<HomePage> {
                                       MediaQuery.of(context).size.height * 0.3),
                               child: Center(
                                 child: SizedBox(
-                                  child: CircularProgressIndicator(),
+                                  child: Tittle(
+                                      text: "No Post",
+                                      size: 20,
+                                      color: Colors.red),
                                   height: 50,
-                                  width: 50,
+                                  width: 100,
                                 ),
                               ),
                             ),

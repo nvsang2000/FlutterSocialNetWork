@@ -115,7 +115,13 @@ class _SignupPageState extends State<SignupPage> {
                       : ButtonWidget(
                           text: "Sign Up",
                           onTap: () {
-                            isLoading = true;
+                            if (userName.text.isNotEmpty &&
+                                pass.text.isNotEmpty &&
+                                comfirmPass.text.isNotEmpty) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                            }
                             validate();
                           }),
                   SBox(10),

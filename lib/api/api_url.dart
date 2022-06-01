@@ -18,4 +18,9 @@ class ApiUrl {
   static const String getTotalImage = url + 'user/all-images/';
   static const String deletePost = url + 'user/delete-post/';
   static const String addComment = url + 'user/comment-post/';
+  static const String deleteCmtPost = url + 'user/comment-post/';
+  static const String changePass = url + 'auth/change-password';
+  static const String repComment = url + 'user/rep-comment/';
+  static const String deleteRepCmt = url + 'user/rep-comment/delete/';
+  static const String getRepCmt = url + 'user/rep-comment/';
 }
