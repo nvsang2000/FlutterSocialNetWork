@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
             User user = response['user'];
             print(user.username);
             Provider.of<UserProvider>(context, listen: false).setUser(user);
-           
+
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (context) => NavigationBarSC(),
@@ -97,7 +97,12 @@ class _LoginPageState extends State<LoginPage> {
                             : ButtonWidget(
                                 text: "Login",
                                 onTap: () {
-                                  isLoading = true;
+                                  if (username.text.isNotEmpty &&
+                                      password.text.isNotEmpty) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                  }
                                   validate();
                                 }),
                         //     ? loading

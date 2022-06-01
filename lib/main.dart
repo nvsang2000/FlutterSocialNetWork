@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:test/models/user.dart';
 import 'package:test/preference/user_peference.dart';
 import 'package:test/provider/auth_provider.dart';
+import 'package:test/provider/comment_provider.dart';
 import 'package:test/provider/edit_infor_provider.dart';
 import 'package:test/provider/friend_provider.dart';
 import 'package:test/provider/post_provider.dart';
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => EditInforProvider()),
         ChangeNotifierProvider(create: (_) => PostProvider()),
-        ChangeNotifierProvider(create: (_) => FriendProvider())
+        ChangeNotifierProvider(create: (_) => FriendProvider()),
+        ChangeNotifierProvider(create: (_)=>CommentProvider())
       ],
       child: MaterialApp(
           title: 'Flutter Demo',

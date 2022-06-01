@@ -34,19 +34,21 @@ class _ProfilePageState extends State<ProfilePage> {
   List<String> listImages = [];
   @override
   void initState() {
+    super.initState();
     userProvider = context.read<UserProvider>();
     userProvider!.getImages(widget.id);
-    postProvider = context.read<PostProvider>();
-
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
     _user = Provider.of<UserProvider>(context).user;
-    postProvider!.getAllPostUser(_user!.token!);
-    list = postProvider!.getPostUserList;
+
+    postProvider = context.watch<PostProvider>();
+
+    postProvider!.getMyPost(_user!.token!);
+    list = postProvider!.getMyPostList;
+
     listImages = userProvider!.listImages;
     return Scaffold(
         body: SafeArea(
@@ -182,13 +184,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                 children: [
                                   listImages.length > 0
                                       ? Expanded(
-                                          child: ImageSee1(image: listImages[0]),
+                                          child:
+                                              ImageSee1(image: listImages[0]),
                                           flex: 1,
                                         )
                                       : Container(),
                                   listImages.length > 1
                                       ? Expanded(
-                                          child: ImageSee2(image: listImages[1]),
+                                          child:
+                                              ImageSee2(image: listImages[1]),
                                           flex: 1,
                                         )
                                       : Container()
@@ -219,7 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemBuilder: (context, index) => Stories(
+                          itemBuilder: (context, index) => Stories(length:list.length,
                               comment: list[index].comment,
                               id: list[index].id,
                               token: _user!.token!,

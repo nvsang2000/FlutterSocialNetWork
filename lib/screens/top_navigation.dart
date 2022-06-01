@@ -9,6 +9,7 @@ import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/BarItem/home_page.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
 import 'package:test/screens/BarItem/search_page.dart';
+import 'package:test/screens/notify/notify_page.dart';
 
 class NavigationBarSC extends StatefulWidget {
   const NavigationBarSC({Key? key}) : super(key: key);
@@ -38,7 +39,8 @@ class _NavigationBarSCState extends State<NavigationBarSC>
   }
 
   @override
-  Widget build(BuildContext context) {User _user = Provider.of<UserProvider>(context).user;
+  Widget build(BuildContext context) {
+    User _user = Provider.of<UserProvider>(context).user;
     return DefaultTabController(
       length: 3,
       child: NestedScrollView(
@@ -54,8 +56,39 @@ class _NavigationBarSCState extends State<NavigationBarSC>
                   title: Tittle(
                       text: "SocialNetwork", size: 25, color: Colors.white),
                   actions: [
-                    IconButton(
-                        onPressed: () {}, icon: Icon(Icons.notifications_none))
+                    Stack(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => NotifyPage()));
+                            },
+                            icon: Icon(Icons.notifications_none)),
+                        Positioned(
+                          top: 22,
+                          left: 22,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color.fromARGB(255, 247, 103, 93),
+                            ),
+                            height: 20,
+                            width: 20,
+                            child: Center(
+                              child: Text(
+                                '1',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
                   ],
                   pinned: true,
                   floating: true,
@@ -92,7 +125,8 @@ class _NavigationBarSCState extends State<NavigationBarSC>
             children: <Widget>[
               HomePage(),
               SearchPage(),
-              ProfilePage(id: _user.iduser!,
+              ProfilePage(
+                id: _user.iduser!,
                 isBool: true,
               )
             ],

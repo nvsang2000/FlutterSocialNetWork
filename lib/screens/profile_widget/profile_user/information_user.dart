@@ -51,7 +51,7 @@ class _InformationState extends State<Information> {
             name: "Information",
             onTap: () {
               Navigator.pop(context);
-            },
+            },isBool: true,
           ),
         ),
         Expanded(

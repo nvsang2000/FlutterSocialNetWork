@@ -1,8 +1,19 @@
 class Comments {
   String? message;
-  String? id;
+  String? iduser;
+  String? idcomment;
+  String? idpost;
   String? username;
   String? image;
   String? time;
-  Comments({this.message, this.id, this.image, this.username,this.time});
+  List<dynamic>? repComment;
+  Comments(
+      {this.message,
+      this.iduser,
+      this.image,
+      this.username,
+      this.idcomment,
+      this.time,
+      this.idpost,
+      this.repComment});
 }

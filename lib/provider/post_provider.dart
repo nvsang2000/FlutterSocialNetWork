@@ -84,7 +84,7 @@ class PostProvider extends ChangeNotifier {
   }
 
   List<Post> listPostForUser = [];
-  Future<List<Post>> getAllPostForUser(String id) async {
+  Future<List<Post>> getPostForUser(String id) async {
     List<Post> listNewPostForUser = [];
     Response response = await get(
       Uri.parse(ApiUrl.getAllPostUrl),
@@ -123,9 +123,9 @@ class PostProvider extends ChangeNotifier {
     return listPostForUser;
   }
 
-  List<Post> listPostUser = [];
-  Future<List<Post>> getAllPostUser(String token) async {
-    List<Post> listNewPostUser = [];
+  List<Post> listMyPost = [];
+  Future<List<Post>> getMyPost(String token) async {
+    List<Post> listNewMyPost = [];
     Response response = await get(Uri.parse(ApiUrl.getPostUserUrl),
         headers: {'Authorization': 'Bearer ' + token});
 
@@ -144,18 +144,22 @@ class PostProvider extends ChangeNotifier {
             avatar: i['ownerid']['avatar'],
             createdAt: i['createdAt'],
             username: i['ownerid']['username']);
-        listNewPostUser.add(post);
-        listPostUser = listNewPostUser;
+        listNewMyPost.add(post);
+        listMyPost = listNewMyPost;
       }
       notifyListeners();
-      return listPostUser;
+      return listMyPost;
     } else {
       throw Exception('Failed to load.');
     }
   }
 
-  get getPostUserList {
-    return listPostUser;
+  get clearMyPostList {
+    return listMyPost.clear();
+  }
+
+  get getMyPostList {
+    return listMyPost;
   }
 
   Future<void> likePost(String token, String id) async {
@@ -178,49 +182,5 @@ class PostProvider extends ChangeNotifier {
       print('ok');
     } else
       print("deletePost ${response.statusCode}");
-  }
-
-  Future<void> addComment(String id, String token, String comment) async {
-    Response response = await post(Uri.parse(ApiUrl.addComment + id),
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Content-Type': 'application/json'
-        },
-        body: json.encode({'message': comment}));
-    if (response.statusCode == 200) {
-      print('ok');
-    } else
-      print("addComment ${response.statusCode}");
-  }
-
-  List<Comments> commentsList = [];
-  Future<void> getComment(String id, String token) async {
-    List<Comments> newComments = [];
-    Response response = await get(Uri.parse(ApiUrl.addComment + id), headers: {
-      'Authorization': 'Bearer ' + token,
-      'Content-Type': 'application/json'
-    });
-    if (response.statusCode == 200) {
-      var responseData = json.decode(response.body);
-      for (Map i in responseData['comments']) {
-        Comments comments = await Comments(
-            id: i['userid']['_id'],
-            image: i['userid']['avatar'],
-            message: i['message'],
-            username: i['userid']['username'],
-            time: i['createdAt']);
-        newComments.add(comments);
-        commentsList = newComments;
-      }
-    } else
-      print("getComment ${response.statusCode}");
-  }
-
-  get clearComment {
-    return commentsList.clear();
-  }
-
-  get commentList {
-    return commentsList;
   }
 }

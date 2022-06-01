@@ -50,7 +50,7 @@ class AuthProvider extends ChangeNotifier {
       if (responseData['success']) {
         result = {
           'status': true,
-          'message': 'Successfully Signup',
+          'message': responseData['message'],
           'data': responseData
         };
       } else {
@@ -131,6 +131,49 @@ class AuthProvider extends ChangeNotifier {
       result = {'status': true, 'message': 'Logout Successfully '};
     } else {
       result = {'status': false, 'message': 'Logout Error'};
+    }
+    return result;
+  }
+
+  Future<Map<String, dynamic>> changePass(
+      String oldPassword, String newPassword, String token) async {
+    var result;
+
+    print(oldPassword);
+    print(newPassword);
+    print(token);
+    final Map<String, dynamic> apiBodyData = {
+      'oldPassword': oldPassword,
+      'newPassword': newPassword
+    };
+    Response response = await post(Uri.parse(ApiUrl.changePass),
+        body: json.encode(apiBodyData),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        });
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    print(response.statusCode);
+    print(responseData);
+    print(response.body);
+    if (response.statusCode == 200) {
+      // UserPreference().saveUser(authUser);
+      print(responseData);
+      if (responseData['success']) {
+        result = {
+          'status': true,
+          'message': responseData['message'],
+        };
+      } else {
+        result = {
+          'status': false,
+          'message': responseData['message'],
+        };
+      }
+    } else {
+      _loggedInStatus = Status.NotSignedUp;
+      notifyListeners();
+      result = {'status': false, 'message': responseData['message']};
     }
     return result;
   }

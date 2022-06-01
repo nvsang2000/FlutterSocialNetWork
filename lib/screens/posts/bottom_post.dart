@@ -1,14 +1,20 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:like_button/like_button.dart';
+import 'package:provider/provider.dart';
 import 'package:test/api/api_url.dart';
+import 'package:test/models/comments.dart';
+import 'package:test/models/user.dart';
+import 'package:test/provider/comment_provider.dart';
+import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/posts/comment/comment_screen.dart';
 
 class BottomPost extends StatefulWidget {
   const BottomPost(
       {Key? key,
-      required this.commnet,
+      required this.comment,
       required this.token,
       required this.like,
       required this.iduser,
@@ -18,7 +24,7 @@ class BottomPost extends StatefulWidget {
   final String iduser;
   final String idpost;
   final String token;
-  final List<dynamic> commnet;
+  final List<dynamic> comment;
   @override
   State<BottomPost> createState() => _BottomPostState();
 }
@@ -27,6 +33,7 @@ class _BottomPostState extends State<BottomPost> {
   int likeCount = 0;
   late bool isLike;
   bool? _isLike;
+  int count = 0;
   @override
   void initState() {
     super.initState();
@@ -36,6 +43,19 @@ class _BottomPostState extends State<BottomPost> {
 
   @override
   Widget build(BuildContext context) {
+    int _count = 0;
+    User user = Provider.of<UserProvider>(context).user;
+    CommentProvider comment = context.watch<CommentProvider>();
+    comment.getComment(widget.idpost, user.token!);
+    List<Comments> listComments = comment.commentList;
+    for (var i in listComments) {
+      setState(() {
+        _count += i.repComment!.length;
+      });
+    }
+    setState(() {
+      count = _count;
+    });
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -98,7 +118,7 @@ class _BottomPostState extends State<BottomPost> {
                     width: 10,
                   ),
                   Text(
-                    '${widget.commnet.length}',
+                    '${widget.comment.length + count}',
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey,

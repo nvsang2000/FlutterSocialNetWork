@@ -7,13 +7,14 @@ import 'package:test/provider/post_provider.dart';
 import 'package:test/provider/user_provider.dart';
 import 'package:test/screens/BarItem/profile_page.dart';
 import 'package:test/screens/posts/bottom_post.dart';
-import 'package:test/screens/posts/delete_widget.dart';
+import 'package:test/screens/posts/delete_post_widget.dart';
 import 'package:test/screens/posts/type_post.dart';
 import 'package:test/screens/profile_widget/friend/profile_friend_page.dart';
 
 class Stories extends StatefulWidget {
   const Stories(
       {Key? key,
+      required this.length,
       required this.comment,
       required this.id,
       required this.content,
@@ -27,6 +28,7 @@ class Stories extends StatefulWidget {
       required this.token})
       : super(key: key);
   final String id;
+  final int length;
   final List<dynamic> comment;
   final String content;
   final List<dynamic> image;
@@ -151,7 +153,7 @@ class _StoriesState extends State<Stories> {
               color: Colors.white,
             ),
             child: BottomPost(
-                commnet: widget.comment,
+                comment: widget.comment,
                 like: widget.like,
                 iduser: user!.iduser!,
                 idpost: widget.id,
@@ -200,10 +202,10 @@ class _StoriesState extends State<Stories> {
   GestureDetector textContent() {
     return GestureDetector(
       onTap: () {
-        if (widget.content.length>200) {
+        if (widget.content.length > 200) {
           setState(() {
-          isText = !isText;
-        });
+            isText = !isText;
+          });
         }
       },
       child: Container(
@@ -232,7 +234,8 @@ class _StoriesState extends State<Stories> {
       onTap: () async {
         isMyPost
             ? Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ProfilePage(id: widget.userID,
+                builder: (context) => ProfilePage(
+                      id: widget.userID,
                       isBool: false,
                     )))
             : Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -308,7 +311,7 @@ class _StoriesState extends State<Stories> {
                         context: context,
                         builder: (context) => Padding(
                             padding: MediaQuery.of(context).viewInsets,
-                            child: DeleteWidget(
+                            child: DeletePostWidget(length:widget.length,
                               id: widget.id,
                               token: user!.token!,
                             )));

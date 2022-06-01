@@ -47,7 +47,7 @@ class _InformationFriendState extends State<InformationFriend> {
             name: "Information",
             onTap: () {
               Navigator.pop(context);
-            },
+            },isBool: false,
           ),
           flex: 1,
         ),

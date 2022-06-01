@@ -44,10 +44,11 @@ class Menu2Widget extends StatelessWidget {
                     alignment: Alignment.center,
                     splashColor: Colors.transparent,
                     onPressed: () async {
-                      var userProviders = context.watch<UserProvider>();
-                      var postProvider = context.watch<PostProvider>();
-                      userProviders.clearAllUserForUserList;
-                      postProvider.clearAllList;
+                      var userProviders = context.read<UserProvider>();
+                      var postProvider = context.read<PostProvider>();
+                      await userProviders.clearAllUserForUserList;
+                      await postProvider.clearAllList;
+                      await postProvider.clearMyPostList;
                       UserPreference().removeUser();
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => LoginPage()));
