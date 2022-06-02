@@ -21,12 +21,13 @@ class CommentProvider extends ChangeNotifier {
   }
 
   List<Comments> commentsList = [];
-  Future<void> getComment(String id, String token) async {
+  Future<List<Comments>> getComment(String id, String token) async {
     List<Comments> newComments = [];
     Response response = await get(Uri.parse(ApiUrl.addComment + id), headers: {
       'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json'
     });
+
     if (response.statusCode == 200) {
       var responseData = json.decode(response.body);
       for (Map i in responseData['comments']) {
@@ -41,16 +42,24 @@ class CommentProvider extends ChangeNotifier {
             time: i['createdAt']);
         newComments.add(comments);
         commentsList = newComments;
+
+        // notifyListeners();
       }
-    } else
+      commentsList = newComments;
+      // print(newComments.length);
+      return newComments;
+    } else {
       print("getComment ${response.statusCode}");
+      return newComments;
+    }
   }
 
   get clearComment {
-    return commentsList.clear();
+    return commentsList = [];
   }
 
   get commentList {
+    // commentsList.clear();
     return commentsList;
   }
 
@@ -102,9 +111,9 @@ class CommentProvider extends ChangeNotifier {
             message: i['message'],
             username: i['userid']['username']);
         listNewRepCmt.add(repComment);
-        listRepCmt = listNewRepCmt;
-        notifyListeners();
       }
+      listRepCmt = listNewRepCmt;
+      notifyListeners();
     } else
       print(response.statusCode);
   }

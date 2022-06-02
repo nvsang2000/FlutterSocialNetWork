@@ -77,6 +77,10 @@ class UserProvider extends ChangeNotifier {
     return listUserForUser;
   }
 
+  void notify() {
+    notifyListeners();
+  }
+
   User? userF;
   Future<User> getUser(String token, String id) async {
     Response response = await get(Uri.parse(ApiUrl.profileUrl + id),
@@ -125,6 +129,7 @@ class UserProvider extends ChangeNotifier {
       print('ok');
       List<dynamic> responseData = json.decode(response.body)['urls'];
       images = List<String>.from(responseData);
+      notifyListeners();
     } else {
       print("getTotal ${response.statusCode}");
     }

@@ -9,6 +9,7 @@ import 'package:test/models/post.dart';
 import 'package:test/models/users.dart';
 
 class PostProvider extends ChangeNotifier {
+
   Future<StreamedResponse> newPost(
       String token, String content, String type, File image) async {
     print(content);
@@ -145,8 +146,8 @@ class PostProvider extends ChangeNotifier {
             createdAt: i['createdAt'],
             username: i['ownerid']['username']);
         listNewMyPost.add(post);
-        listMyPost = listNewMyPost;
       }
+      listMyPost = listNewMyPost;
       notifyListeners();
       return listMyPost;
     } else {

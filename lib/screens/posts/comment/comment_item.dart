@@ -12,12 +12,14 @@ import 'package:test/screens/posts/comment/rep_comment/repcomment_item.dart';
 class CommentItem extends StatefulWidget {
   const CommentItem(
       {Key? key,
+      required this.lengthrep,
       required this.comments,
       required this.onTap,
       required this.length})
       : super(key: key);
   final Comments comments;
   final int length;
+  final int lengthrep;
   final VoidCallback onTap;
   @override
   State<CommentItem> createState() => _CommentItemState();
@@ -50,7 +52,9 @@ class _CommentItemState extends State<CommentItem> {
     if (widget.comments.repComment!.length > 0) {
       var repCmt = context.watch<CommentProvider>();
       repCmt.getRepCmt(user.token!, widget.comments.idcomment!);
-      repComment = repCmt.getRepCmtList;
+      if (widget.lengthrep > 0) {
+        repComment = repCmt.getRepCmtList;
+      }
     }
 
     return Column(

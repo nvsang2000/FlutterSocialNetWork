@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
+import 'package:test/api/api_url.dart';
 import 'package:test/item/appBar/app_bar.dart';
 import 'package:test/models/comments.dart';
 import 'package:test/models/user.dart';
@@ -10,35 +14,73 @@ import 'package:test/screens/posts/comment/comment_item.dart';
 import 'package:test/screens/posts/comment/comment_widget.dart';
 
 class CommentScreen extends StatefulWidget {
-  const CommentScreen({Key? key, required this.id}) : super(key: key);
+  const CommentScreen({Key? key, required this.id, required this.length})
+      : super(key: key);
   final String id;
+  final int length;
   @override
   State<CommentScreen> createState() => _CommentScreenState();
 }
 
 class _CommentScreenState extends State<CommentScreen> {
   List<Comments> listComments = [];
-  CommentProvider? comment;
+
   bool isCmt = false;
   bool isLoad = false;
   String name = '';
   String idcmt = '';
   TextEditingController controller = TextEditingController();
   int count = 0;
+  int length = 0;
   @override
   void initState() {
-    comment = context.read<CommentProvider>();
-    comment!.clearComment;
+    // comment!.clearComment;
+    length = widget.length;
     super.initState();
+  }
+
+  Future<void> getComment(String id, String token) async {
+    List<Comments> newComments = [];
+    Response response = await get(Uri.parse(ApiUrl.addComment + id), headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    });
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      for (Map i in responseData['comments']) {
+        Comments comments = await Comments(
+            iduser: i['userid']['_id'],
+            idcomment: i['_id'],
+            repComment: i['rep_comment'],
+            idpost: i['postid'],
+            image: i['userid']['avatar'],
+            message: i['message'],
+            username: i['userid']['username'],
+            time: i['createdAt']);
+        newComments.add(comments);
+        listComments = newComments;
+        // notifyListeners();
+      }
+
+      print(listComments.length);
+    } else {
+      print("getComment ${response.statusCode}");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    int _count = 0;
     User user = Provider.of<UserProvider>(context).user;
-    comment = context.watch<CommentProvider>();
-    comment!.getComment(widget.id, user.token!);
-    listComments = comment!.commentList;
+
+      getComment(widget.id, user.token!);
+   
+    int _count = 0;
+
+    CommentProvider comment = context.watch<CommentProvider>();
+    // print(widget.id);
+    // print(user.token);
+
     double bottomInsets = MediaQuery.of(context).viewInsets.bottom;
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
@@ -96,7 +138,9 @@ class _CommentScreenState extends State<CommentScreen> {
                                   //   print(listComments[index].repComment![0]
                                   //       ['message']);
                                   // }
+
                                   return CommentItem(
+                                    lengthrep: count,
                                     length: listComments.length,
                                     comments: listComments[index],
                                     onTap: () {
@@ -215,16 +259,17 @@ class _CommentScreenState extends State<CommentScreen> {
                                               isLoad = true;
                                             });
                                             isCmt
-                                                ? await comment!.repCmt(
+                                                ? await comment.repCmt(
                                                     idcmt,
                                                     user.token!,
                                                     controller.text)
-                                                : await comment!.addComment(
+                                                : await comment.addComment(
                                                     widget.id,
                                                     user.token!,
                                                     controller.text);
                                             controller.clear();
                                             setState(() {
+                                              length = 1;
                                               isCmt = false;
                                               isLoad = false;
                                             });
