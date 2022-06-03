@@ -24,7 +24,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Post> list = [];
   List<Users> listUser = [];
-  int? current;
 
   @override
   void initState() {
@@ -40,7 +39,7 @@ class _HomePageState extends State<HomePage> {
     var postProvider = context.watch<PostProvider>();
     postProvider.getAllPost(listUser, user.iduser!);
     list = postProvider.getAllList;
-
+    postProvider.getMyPost(user.token!);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 240, 240, 240),
       resizeToAvoidBottomInset: true,

@@ -79,6 +79,7 @@ class _StoriesState extends State<Stories> {
 
   @override
   Widget build(BuildContext context) {
+  
     user = Provider.of<UserProvider>(context).user;
     if (user!.token != null) {
       if (user!.iduser == widget.userID) {
@@ -311,7 +312,8 @@ class _StoriesState extends State<Stories> {
                         context: context,
                         builder: (context) => Padding(
                             padding: MediaQuery.of(context).viewInsets,
-                            child: DeletePostWidget(length:widget.length,
+                            child: DeletePostWidget(
+                              length: widget.length,
                               id: widget.id,
                               token: user!.token!,
                             )));

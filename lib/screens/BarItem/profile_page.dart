@@ -27,28 +27,27 @@ class _ProfilePageState extends State<ProfilePage> {
   double coverHeight = 200;
   double avartaHeight = 120;
   List<Post> list = [];
-  User? _user;
+
   String? id;
   UserProvider? userProvider;
   PostProvider? postProvider;
   List<String> listImages = [];
   @override
   void initState() {
-    super.initState();
     userProvider = context.read<UserProvider>();
     userProvider!.getImages(widget.id);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     double menuWidth = (MediaQuery.of(context).size.width - 40);
-    _user = Provider.of<UserProvider>(context).user;
-
+    userProvider!.getAllUserForUser();
+    User _user = Provider.of<UserProvider>(context).user;
     postProvider = context.watch<PostProvider>();
+    postProvider!.getMyPost(_user.token!);
 
-    postProvider!.getMyPost(_user!.token!);
     list = postProvider!.getMyPostList;
-
     listImages = userProvider!.listImages;
     return Scaffold(
         body: SafeArea(
@@ -81,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 10,
                       ),
                       Text(
-                        _user!.username!,
+                        _user.username!,
                         style: TextStyle(
                             fontSize: 25, fontWeight: FontWeight.bold),
                       ),
@@ -89,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 20,
                       ),
                       Text(
-                        _user!.about!,
+                        _user.about!,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 15,
@@ -110,15 +109,13 @@ class _ProfilePageState extends State<ProfilePage> {
                               width: menuWidth),
                           MenuWidget(
                               menu: "Followers",
-                              index: _user != null
-                                  ? _user!.followers!.length
-                                  : 999,
+                              index:
+                                  _user != null ? _user.followers!.length : 999,
                               width: menuWidth),
                           MenuWidget(
                               menu: "Following",
-                              index: _user != null
-                                  ? _user!.following!.length
-                                  : 999,
+                              index:
+                                  _user != null ? _user.following!.length : 999,
                               width: menuWidth),
                         ],
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -217,16 +214,17 @@ class _ProfilePageState extends State<ProfilePage> {
             )),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                  (context, index) => list.length != 0
+                  (context, index) => _user.token != null && list.length != 0
                       ? ListView.builder(
                           reverse: true,
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemBuilder: (context, index) => Stories(length:list.length,
+                          itemBuilder: (context, index) => Stories(
+                              length: list.length,
                               comment: list[index].comment,
                               id: list[index].id,
-                              token: _user!.token!,
+                              token: _user.token!,
                               userID: list[index].userID,
                               content: list[index].content,
                               image: list[index].images,

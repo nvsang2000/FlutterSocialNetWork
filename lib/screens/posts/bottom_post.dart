@@ -34,6 +34,7 @@ class _BottomPostState extends State<BottomPost> {
   late bool isLike;
   bool? _isLike;
   int count = 0;
+
   @override
   void initState() {
     super.initState();
@@ -46,16 +47,22 @@ class _BottomPostState extends State<BottomPost> {
     int _count = 0;
     User user = Provider.of<UserProvider>(context).user;
     CommentProvider comment = context.watch<CommentProvider>();
-    comment.getComment(widget.idpost, user.token!);
-    List<Comments> listComments = comment.commentList;
-    for (var i in listComments) {
-      setState(() {
-        _count += i.repComment!.length;
-      });
-    }
-    setState(() {
-      count = _count;
-    });
+
+    // comment.getComment(widget.idpost, user.token!);
+    // List<Comments> listComments = comment.commentList;
+
+    // if (widget.comment.length > 0) {
+    //   for (var i in listComments) {
+    //     setState(() {
+    //       _count += i.repComment!.length;
+    //     });
+    //   }
+    //   setState(() {
+    //     count = _count;
+    //   });
+    // }
+    // print(
+    //     ' SỐ CMT: ${widget.comment.length.toString()} + sỐ REPCMT ${_count.toString()}');
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -96,18 +103,23 @@ class _BottomPostState extends State<BottomPost> {
               width: 20,
             ),
             GestureDetector(
-              onTap: () => showModalBottomSheet(
-                // enableDrag: false,
-                // isDismissible: false,
-                isScrollControlled: true,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(15))),
-                context: context,
-                builder: (context) => new CommentScreen(
-                  id: widget.idpost,
-                ),
-              ),
+              onTap: () async {
+                comment.commentsList.clear();
+
+                showModalBottomSheet(
+                  // enableDrag: false,
+                  // isDismissible: false,
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(15))),
+                  context: context,
+                  builder: (context) => new CommentScreen(
+                    length: widget.comment.length,
+                    id: widget.idpost,
+                  ),
+                );
+              },
               child: Row(
                 children: [
                   Icon(
@@ -118,7 +130,7 @@ class _BottomPostState extends State<BottomPost> {
                     width: 10,
                   ),
                   Text(
-                    '${widget.comment.length + count}',
+                    '${widget.comment.length}',
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
