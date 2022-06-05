@@ -75,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
                                       id: listSearch[index].iduser!,
                                       image: listSearch[index].avatarImage!,
                                       username: listSearch[index].username!),
-                                )
+                                ),
                           childCount: 1))
                 ],
               )),
