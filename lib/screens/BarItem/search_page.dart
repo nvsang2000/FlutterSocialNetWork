@@ -66,7 +66,16 @@ class _SearchPageState extends State<SearchPage> {
                                       image: listSearch[index].avatarImage!,
                                       username: listSearch[index].username!),
                                 )
-                              : Container(),
+                              : ListView.builder(
+                                  itemCount: listUser.length,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) => UserItem(
+                                      token: token!,
+                                      id: listSearch[index].iduser!,
+                                      image: listSearch[index].avatarImage!,
+                                      username: listSearch[index].username!),
+                                ),
                           childCount: 1))
                 ],
               )),
