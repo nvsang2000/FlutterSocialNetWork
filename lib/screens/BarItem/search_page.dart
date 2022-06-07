@@ -72,9 +72,9 @@ class _SearchPageState extends State<SearchPage> {
                                   physics: NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) => UserItem(
                                       token: token!,
-                                      id: listSearch[index].iduser!,
-                                      image: listSearch[index].avatarImage!,
-                                      username: listSearch[index].username!),
+                                      id: listUser[index].iduser!,
+                                      image: listUser[index].avatarImage!,
+                                      username: listUser[index].username!),
                                 ),
                           childCount: 1))
                 ],
